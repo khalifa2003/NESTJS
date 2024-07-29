@@ -4,9 +4,6 @@ import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
-// import { JwtAuthGuard } from './jwt-auth.guard'; // Define this guard
-// import { RolesGuard } from './roles.guard'; // Define this guard
-
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

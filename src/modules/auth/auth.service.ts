@@ -25,31 +25,22 @@ export class AuthService {
     private configService: ConfigService,
     private emailService: EmailService,
     private jwtService: JwtService,
-    private userService: UserService,
   ) {}
 
-  async validateUser(email: string, pass: string): Promise<any> {
-    const user = await this.userService.findOne(email);
-    if (user && user.password === pass) {
-      const { password, ...result } = user;
-      return result;
-    }
-    return null;
-  }
-
   async signup(signupDto: SignupDto) {
-    const { fname, lname, email, password } = signupDto;
-    const hashedPassword = await bcrypt(password, 10);
-    const user = new this.userModel({
+    const { fname, lname, email, password, phone } = signupDto;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await new this.userModel({
       fname,
       lname,
       email,
+      phone,
       password: hashedPassword,
-    });
+    }).save();
 
     const token = this.jwtService.sign(
       { userId: user._id },
-      { secret: this.configService.get<string>('JWT_SECRET_KEY') },
+      { secret: process.env.JWT_SECRET_KEY },
     );
     return { user, token };
   }
@@ -76,6 +67,7 @@ export class AuthService {
     }
 
     const resetCode = crypto.randomBytes(32).toString('hex');
+
     const hashedResetCode = crypto
       .createHash('sha256')
       .update(resetCode)

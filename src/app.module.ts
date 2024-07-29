@@ -16,12 +16,8 @@ import { AuthModule } from './modules/auth/auth.module';
     ConfigModule.forRoot({
       isGlobal: true, // Makes the ConfigModule globally available
     }),
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: `${configService.get<string>('MONGODB_URI')}/${configService.get<string>('DB_NAME')}`,
-      }),
-      inject: [ConfigService],
+    MongooseModule.forRoot(process.env.MONGODB_URI, {
+      dbName: process.env.DB_NAME,
     }),
     CategoryModule,
     BrandModule,

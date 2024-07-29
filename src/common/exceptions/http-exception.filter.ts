@@ -32,6 +32,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         statusCode: status,
         path: request.url,
         message: validationErrors,
+        stack: stack,
       });
     }
 

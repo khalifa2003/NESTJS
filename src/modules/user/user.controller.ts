@@ -105,7 +105,7 @@ export class UserController {
       req.user._id,
       newPassword,
     );
-    const token = createToken(user._id); // Make sure to implement createToken function
+    const token = createToken(req.user._id); // Make sure to implement createToken function
     return { data: user, token };
   }
 
