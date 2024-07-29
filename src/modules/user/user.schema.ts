@@ -1,10 +1,13 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument, Types } from 'mongoose';
+import { Prop, SchemaFactory, Schema } from '@nestjs/mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export type UserDocument = HydratedDocument<User>;
 
 @Schema({ timestamps: true })
 export class User {
+  @Prop()
+  _id?: string;
+
   @Prop({ type: String, trim: true, required: true })
   fname: string;
 
@@ -27,10 +30,10 @@ export class User {
   passwordChangedAt: Date;
 
   @Prop()
-  passwordResetCode;
+  passwordResetCode: string;
 
   @Prop()
-  passwordResetExpires: string;
+  passwordResetExpires: number;
 
   @Prop()
   passwordResetVerified: boolean;
