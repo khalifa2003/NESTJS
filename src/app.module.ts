@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CategoryModule } from './modules/category/category.module';
 import { BrandModule } from './modules/brand/brand.module';
 import { SubcategoryModule } from './modules/subcategory/subcategory.module';
+import { ProductModule } from './modules/product/product.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { SubcategoryModule } from './modules/subcategory/subcategory.module';
     CategoryModule,
     BrandModule,
     SubcategoryModule,
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],

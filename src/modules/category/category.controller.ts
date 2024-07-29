@@ -12,7 +12,6 @@ import {
   Body,
 } from '@nestjs/common';
 
-
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
@@ -38,6 +37,7 @@ export class CategoryController {
     @Param('id') id: string,
     @Body() body: UpdateCategoryDto,
   ) {
+    console.log('hi');
     return this.categoryService.updateOne(id, body);
   }
 

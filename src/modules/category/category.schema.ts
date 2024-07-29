@@ -5,7 +5,12 @@ export type CategoryDocument = HydratedDocument<Category>;
 
 @Schema({ timestamps: true })
 export class Category {
-  @Prop({ required: true, min: 3, max: 32, unique: true })
+  @Prop({
+    required: true,
+    minlength: [3, 'Too short name'],
+    maxlength: [32, 'Too short name'],
+    unique: true,
+  })
   name: string;
 
   @Prop()

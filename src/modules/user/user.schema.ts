@@ -41,7 +41,7 @@ export class User {
   @Prop({ type: Boolean, default: true })
   active: boolean;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Product' })
+  @Prop({ type: Types.ObjectId, ref: 'Product' })
   wishlist: [Types.ObjectId];
 
   @Prop({

@@ -17,29 +17,29 @@ export class BrandController {
   constructor(private readonly brandService: BrandService) {}
 
   @Get()
-  getBrands() {
+  async getBrands() {
     return this.brandService.findAll();
   }
 
   @Get('/:id')
-  getBrand(@Param('id') id: string) {
+  async getBrand(@Param('id') id: string) {
     return this.brandService.findOne(id);
   }
 
   @Post()
   @HttpCode(201)
-  createBrand(@Body('') body: CreateBrandDto) {
+  async createBrand(@Body() body: CreateBrandDto) {
     return this.brandService.createOne(body);
   }
 
   @Patch('/:id')
-  updateBrand(@Param('id') id: string, @Body('body') body: UpdateBrandDto) {
-    return this.brandService.UpdateOne(id, body);
+  async updateBrand(@Param('id') id: string, @Body() body: UpdateBrandDto) {
+    return this.brandService.updateOne(id, body);
   }
 
   @Delete('/:id')
   @HttpCode(204)
-  deleteBrand(@Param('id') id: string) {
+  async deleteBrand(@Param('id') id: string) {
     return this.brandService.deleteOne(id);
   }
 }

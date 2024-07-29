@@ -7,8 +7,9 @@ export type CartDocument = HydratedDocument<Cart>;
 export class Cart {
   @Prop([
     {
+      _id: Types.ObjectId,
       product: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Types.ObjectId,
         ref: 'Product',
         required: true,
       },
@@ -17,17 +18,20 @@ export class Cart {
       createdAt: { type: Date, default: Date.now },
     },
   ])
-  cartItems: {
-    product: Types.ObjectId;
-    quantity: number;
-    price: number;
-    createdAt: Date;
-  }[];
+  cartItems: [
+    {
+      _id?: Types.ObjectId;
+      product: Types.ObjectId;
+      quantity: number;
+      price: number;
+      createdAt: Date;
+    },
+  ];
 
   @Prop()
   totalCartPrice: number;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  @Prop({ type: Types.ObjectId, ref: 'User' })
   user: Types.ObjectId;
 }
 

@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
-export type CategoryDocument = HydratedDocument<Product>;
+export type ProductDocument = HydratedDocument<Product>;
 
 @Schema({
   timestamps: true,
@@ -10,17 +10,50 @@ export type CategoryDocument = HydratedDocument<Product>;
   toObject: { virtuals: true },
 })
 export class Product {
-  @Prop({ required: true, trim: true, minLength: 5 })
+  static findById(productId: any) {
+    throw new Error('Method not implemented.');
+  }
+  @Prop({
+    required: true,
+    trim: true,
+    minlength: [3, 'Too short product title'],
+  })
   title: string;
 
-  @Prop({ required: true, minlength: 30 })
+  @Prop({ required: true, minlength: [20, 'Too short product description'] })
   description: string;
 
-  @Prop({ required: true, min: 10, max: 2000000 })
+  @Prop({ required: true })
+  quantity: number;
+
+  @Prop({
+    required: true,
+    trim: true,
+    max: [2000000, 'Too long product price'],
+  })
   price: number;
 
-  @Prop({ required: true, min: 5, max: 1000 })
-  quantity: number;
+  @Prop({ required: true })
+  images: string[];
+
+  @Prop({ type: Types.ObjectId, ref: 'Category', required: true })
+  category: Types.ObjectId;
+
+  @Prop([{ type: Types.ObjectId, ref: 'SubCategory' }])
+  subcategories: Types.ObjectId[];
+
+  @Prop({ type: Types.ObjectId, ref: 'Brand' })
+  brand: Types.ObjectId;
+
+  @Prop({
+    type: Number,
+    min: [1, 'Rating must be above or equal 1.0'],
+    max: [5, 'Rating must be below or equal 5.0'],
+  })
+  ratingsAverage: number;
+
+  @Prop({ type: Number, default: 0 })
+  ratingsQuantity: number;
 
   @Prop({
     type: {
@@ -43,31 +76,6 @@ export class Product {
     memory: string;
     os: string;
   };
-
-  @Prop({ required: true })
-  images: string[];
-
-  @Prop({
-    required: true,
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category',
-  })
-  category: Types.ObjectId;
-
-  @Prop({
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Brand',
-  })
-  brand: Types.ObjectId;
-
-  @Prop({
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Subcategory',
-  })
-  subcategory: Types.ObjectId;
-
-  @Prop({ min: 1, max: 5 })
-  ratingsAverage: number;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

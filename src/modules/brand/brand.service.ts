@@ -10,7 +10,7 @@ export class BrandService {
   constructor(@InjectModel(Brand.name) private BrandSchema: Model<Brand>) {}
 
   async findAll(): Promise<Brand[]> {
-    return await this.BrandSchema.find({});
+    return await this.BrandSchema.find().exec();
   }
 
   async findOne(id: string): Promise<Brand> {
@@ -18,12 +18,15 @@ export class BrandService {
     return brand;
   }
 
-  async createOne(createBeandDto: CreateBrandDto): Promise<Brand> {
-    const createdBrand = await new this.BrandSchema(createBeandDto);
-    return createdBrand.save();
+  async createOne(createBrandDto: CreateBrandDto): Promise<Brand> {
+    const brand = await new this.BrandSchema(createBrandDto);
+    return brand.save();
   }
 
-  async UpdateOne(id: string, updateBrandDto: UpdateBrandDto): Promise<Brand> {
+  async updateOne(
+    id: string,
+    updateBrandDto: UpdateBrandDto,
+  ): Promise<UpdateBrandDto> {
     const brand = await this.BrandSchema.findByIdAndUpdate(id, updateBrandDto, {
       new: true,
     });

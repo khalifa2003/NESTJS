@@ -5,7 +5,12 @@ export type BrandDocument = HydratedDocument<Brand>;
 
 @Schema({ timestamps: true })
 export class Brand {
-  @Prop({ required: true, min: 2, max: 32, unique: true })
+  @Prop({
+    required: true,
+    minlength: [2, 'Too short brand name'],
+    maxlength: [32, 'Too long brand name'],
+    unique: true,
+  })
   name: string;
 
   @Prop()
