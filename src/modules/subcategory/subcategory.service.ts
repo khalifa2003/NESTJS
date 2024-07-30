@@ -10,9 +10,7 @@ export class SubcategoryService {
   constructor(
     @InjectModel(Subcategory.name)
     private SubcategorySchema: Model<Subcategory>,
-  ) {
-    console.log(SubcategorySchema);
-  }
+  ) {}
 
   async findAll(): Promise<Subcategory[]> {
     return await this.SubcategorySchema.find().exec();

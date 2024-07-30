@@ -4,7 +4,7 @@ import { User, UserSchema } from './user.schema';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { Address, AddressSchema } from './address/address.schema';
-import { JwtStrategy } from '../auth/jwt.strategy';
+import { JwtStrategy } from '../../common/jwt.strategy';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
@@ -15,6 +15,6 @@ import { AuthModule } from '../auth/auth.module';
   ],
   controllers: [UserController],
   providers: [UserService, JwtStrategy],
-  exports: [MongooseModule],
+  exports: [UserService],
 })
 export class UserModule {}

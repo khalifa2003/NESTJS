@@ -22,10 +22,33 @@ import { EmailService } from 'src/utils/email/email.service';
 export class AuthService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
-    private configService: ConfigService,
     private emailService: EmailService,
     private jwtService: JwtService,
+    private usersService: UserService,
   ) {}
+
+  async validateUser(username: string, pass: string): Promise<any> {
+    const user = await this.usersService.findOne(username);
+    if (user && user.password === pass) {
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
+  }
+
+  async login(loginDto: LoginDto) {
+    const { email, password } = loginDto;
+    const user = await this.userModel.findOne({ email });
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      throw new UnauthorizedException('Incorrect email or password');
+    }
+
+    const token = this.jwtService.sign(
+      { userId: user._id },
+      { secret: process.env.JWT_SECRET_KEY },
+    );
+    return { user, token };
+  }
 
   async signup(signupDto: SignupDto) {
     const { fname, lname, email, password, phone } = signupDto;
@@ -41,20 +64,6 @@ export class AuthService {
     const token = this.jwtService.sign(
       { userId: user._id },
       { secret: process.env.JWT_SECRET_KEY },
-    );
-    return { user, token };
-  }
-
-  async login(loginDto: LoginDto) {
-    const { email, password } = loginDto;
-    const user = await this.userModel.findOne({ email });
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw new UnauthorizedException('Incorrect email or password');
-    }
-
-    const token = this.jwtService.sign(
-      { userId: user._id },
-      { secret: this.configService.get<string>('JWT_SECRET_KEY') },
     );
     return { user, token };
   }
