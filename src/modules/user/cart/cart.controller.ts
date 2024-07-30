@@ -7,8 +7,13 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { CartServeice } from './cart.service';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Role } from 'src/common/enums/role.enum';
 
 @Controller('product')
 export class CartController {
@@ -25,6 +30,8 @@ export class CartController {
   // @desc    Get logged user cart
   // @route   GET /api/v1/cart
   // @access  Private/User
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.User)
   @Get('/:id')
   async getLoggedUserCart(@Body() body: any) {
     this.cartServeice.getCart(body);
@@ -33,6 +40,8 @@ export class CartController {
   // @desc    Remove specific cart item
   // @route   DELETE /api/v1/cart/:itemId
   // @access  Private/User
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.User)
   @Patch('/:id')
   async removeSpecificCartItem(@Body() body: any, @Param() params) {
     this.cartServeice.removeOneFromCart(body, params);
@@ -41,6 +50,8 @@ export class CartController {
   // @desc    clear logged user cart
   // @route   DELETE /api/v1/cart
   // @access  Private/User
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.User)
   @Delete('/:id')
   @HttpCode(204)
   async clearCart(@Body() body: any) {
@@ -50,6 +61,8 @@ export class CartController {
   // @desc    Update specific cart item quantity
   // @route   PUT /api/v1/cart/:itemId
   // @access  Private/User
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.User)
   @Patch('/:id')
   async updateCartItemQuantity(@Body() body: any, @Param() params) {
     this.cartServeice.updateQuantity(body, params);

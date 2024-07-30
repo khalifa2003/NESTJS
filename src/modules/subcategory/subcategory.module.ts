@@ -4,6 +4,8 @@ import { Subcategory, SubcategorySchema } from './subcategory.schema';
 import { SubcategoryService } from './subcategory.service';
 import { SubcategoryController } from './subcategory.controller';
 import { CategoryModule } from '../category/category.module';
+import { AuthModule } from '../auth/auth.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -11,6 +13,8 @@ import { CategoryModule } from '../category/category.module';
       { name: Subcategory.name, schema: SubcategorySchema },
     ]),
     CategoryModule,
+    AuthModule,
+    UserModule,
   ],
   controllers: [SubcategoryController],
   providers: [SubcategoryService],

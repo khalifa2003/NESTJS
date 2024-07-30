@@ -10,6 +10,9 @@ import { ProductModule } from './modules/product/product.module';
 import { UserModule } from './modules/user/user.module';
 import { CartModule } from './modules/user/cart/cart.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { ReviewModule } from './modules/review/review.module';
+import { AddressModule } from './modules/user/address/addres.module';
+import { WishlistModule } from './modules/user/wishlist/wishlist.module';
 
 @Module({
   imports: [
@@ -26,6 +29,9 @@ import { AuthModule } from './modules/auth/auth.module';
     UserModule,
     CartModule,
     AuthModule,
+    ReviewModule,
+    AddressModule,
+    WishlistModule,
   ],
   controllers: [AppController],
   providers: [AppService],

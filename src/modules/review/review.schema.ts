@@ -6,10 +6,10 @@ export type ReviewDocument = HydratedDocument<Review>;
 @Schema({ timestamps: true })
 export class Review {
   @Prop()
-  comment: string;
+  review: string;
 
   @Prop({ type: Number, min: 1, max: 5, required: true })
-  rate: number;
+  rating: number;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   user: Types.ObjectId;

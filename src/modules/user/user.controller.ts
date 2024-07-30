@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Post,
-  Patch,
   Delete,
   HttpCode,
   Param,
@@ -21,10 +20,10 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { createToken } from 'src/utils/createToken';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Role } from 'src/common/enums/role.enum';
 import { Roles } from 'src/common/decorators/roles.decorator';
 
 @Controller('user')
-@UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(
     private readonly userService: UserService,
@@ -34,7 +33,8 @@ export class UserController {
   // @desc    Get list of users
   // @route   GET /api/v1/users
   // @access  Private/Admin
-
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Admin, Role.Manager)
   @Get()
   async findAll(): Promise<User[]> {
     return this.userService.findAll();
@@ -43,7 +43,8 @@ export class UserController {
   // @desc    Get specific user by id
   // @route   GET /api/v1/users/:id
   // @access  Private/Admin
-
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Admin, Role.Manager)
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<User> {
     return this.userService.findOne(id);
@@ -52,7 +53,8 @@ export class UserController {
   // @desc    Create user
   // @route   POST  /api/v1/users
   // @access  Private/Admin
-
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Admin, Role.Manager)
   @Post()
   @HttpCode(201)
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
@@ -62,7 +64,8 @@ export class UserController {
   // @desc    Update specific user
   // @route   PUT /api/v1/users/:id
   // @access  Private/Admin
-
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Admin, Role.Manager)
   @Put(':id')
   async update(
     @Param('id') id: string,
@@ -74,7 +77,8 @@ export class UserController {
   // @desc    Delete specific user
   // @route   DELETE /api/v1/users/:id
   // @access  Private/Admin
-
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Admin, Role.Manager)
   @Delete(':id')
   @HttpCode(204)
   async remove(@Param('id') id: string): Promise<void> {
@@ -85,7 +89,7 @@ export class UserController {
   // @route   GET /api/v1/users/getMe
   // @access  Private/Protect
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'manager')
+  @Roles(Role.User)
   @Get('me')
   async getLoggedUserData(@Req() req): Promise<User> {
     return this.userService.findOne(req.user._id);
@@ -95,7 +99,7 @@ export class UserController {
   // @route   PUT /api/v1/users/updateMyPassword
   // @access  Private/Protect
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'manager')
+  @Roles(Role.User)
   @Put('me/password')
   async updateLoggedUserPassword(
     @Req() req,
@@ -110,7 +114,7 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'manager')
+  @Roles(Role.User)
   @Put(':id/password')
   async changeUserPassword(
     @Param('id') id: string,
@@ -122,7 +126,8 @@ export class UserController {
   // @desc    Update logged user data (without password, role)
   // @route   PUT /api/v1/users/updateMe
   // @access  Private/Protect
-
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.User)
   @Put('me')
   async updateLoggedUserData(
     @Param() req,
@@ -131,6 +136,8 @@ export class UserController {
     return this.userService.updateLoggedUser(req.user._id, updateUserDto);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.User)
   @Delete('me')
   async deleteLoggedUserData(@Req() req): Promise<void> {
     return this.userService.deactivateUser(req.user._id);
