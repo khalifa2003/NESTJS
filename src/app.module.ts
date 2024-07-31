@@ -13,6 +13,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ReviewModule } from './modules/review/review.module';
 import { AddressModule } from './modules/user/address/addres.module';
 import { WishlistModule } from './modules/user/wishlist/wishlist.module';
+import { OrdersModule } from './modules/orders/orders.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { WishlistModule } from './modules/user/wishlist/wishlist.module';
     ReviewModule,
     AddressModule,
     WishlistModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

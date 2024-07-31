@@ -76,6 +76,12 @@ export class Product {
     memory: string;
     os: string;
   };
+
+  @Prop({ default: false })
+  isDeleted: boolean; // Add this field
+
+  @Prop()
+  deletedAt?: Date;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

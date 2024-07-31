@@ -16,6 +16,7 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { DeleteCategoryPipe } from 'src/common/pipes/delete-category.pipe';
 
 @Controller('category')
 export class CategoryController {
@@ -23,7 +24,12 @@ export class CategoryController {
 
   @Get()
   async getCategories() {
-    return this.categoryService.findAll();
+    return this.categoryService.findActiveCategories();
+  }
+
+  @Get('/deleted')
+  async getDeletedCategories() {
+    return this.categoryService.findDeletedCategories();
   }
 
   @Get('/:id')
@@ -51,9 +57,18 @@ export class CategoryController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.Manager)
-  @Delete('/:id')
+  @Delete('/soft/:id')
   @HttpCode(204)
-  async deleteCategory(@Param('id') id: string) {
+  async softDelete(@Param('id', DeleteCategoryPipe) id: string) {
+    await this.categoryService.softDelete(id);
+    return { message: 'Category marked as deleted' };
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Admin, Role.Manager)
+  @Delete('/forever/:id')
+  @HttpCode(204)
+  async deletepermanently(@Param('id', DeleteCategoryPipe) id: string) {
     return this.categoryService.deleteOne(id);
   }
 }
