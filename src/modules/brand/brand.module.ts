@@ -14,6 +14,6 @@ import { AuthModule } from '../auth/auth.module';
   ],
   controllers: [BrandController],
   providers: [BrandService],
-  exports: [],
+  exports: [MongooseModule],
 })
 export class BrandModule {}

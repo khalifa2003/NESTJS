@@ -14,11 +14,12 @@ import { ReviewModule } from './modules/review/review.module';
 import { AddressModule } from './modules/user/address/addres.module';
 import { WishlistModule } from './modules/user/wishlist/wishlist.module';
 import { OrdersModule } from './modules/orders/orders.module';
+import { ProductService } from './modules/product/product.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, // Makes the ConfigModule globally available
+      isGlobal: true,
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI, {
       dbName: process.env.DB_NAME,
@@ -36,6 +37,6 @@ import { OrdersModule } from './modules/orders/orders.module';
     OrdersModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ProductService],
 })
 export class AppModule {}

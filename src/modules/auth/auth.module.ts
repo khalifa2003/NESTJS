@@ -7,7 +7,6 @@ import { UserModule } from '../user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from '../user/user.schema';
 import { EmailModule } from 'src/utils/email/email.modul';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from 'src/common/jwt.strategy';
 
 @Module({

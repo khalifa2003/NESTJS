@@ -9,19 +9,14 @@ import { Category } from './category.schema';
 export class CategoryService {
   constructor(
     @InjectModel(Category.name) private categoryModel: Model<Category>,
-    @InjectModel(Category.name) private productModel: Model<Category>,
   ) {}
 
-  async findActiveCategories(): Promise<Category[]> {
-    return this.categoryModel.find({ isDeleted: false }).exec();
-  }
-
-  async findDeletedCategories(): Promise<Category[]> {
-    return this.categoryModel.find({ isDeleted: true }).exec();
+  async findAll(): Promise<Category[]> {
+    return this.categoryModel.find().exec();
   }
 
   async findOne(id: string): Promise<Category> {
-    const category = await this.categoryModel.findById(id);
+    const category = await this.categoryModel.findById(id).exec();
     return category;
   }
 
@@ -37,16 +32,6 @@ export class CategoryService {
       { new: true },
     );
     return category;
-  }
-
-  async softDelete(id: string): Promise<void> {
-    const category = await this.categoryModel.findById(id);
-    if (!category) {
-      throw new NotFoundException('Category not found');
-    }
-
-    category.isDeleted = true;
-    category.deletedAt = new Date();
   }
 
   async deleteOne(id: string): Promise<void> {

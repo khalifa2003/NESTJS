@@ -8,20 +8,20 @@ import { UpdateProductDto } from './dto/update-product.dto';
 @Injectable()
 export class ProductService {
   constructor(
-    @InjectModel(Product.name) private ProductSchema: Model<Product>,
+    @InjectModel(Product.name) private productModel: Model<Product>,
   ) {}
 
   async findAll(): Promise<Product[]> {
-    return await this.ProductSchema.find().exec();
+    return await this.productModel.find().exec();
   }
 
   async findOne(id: string): Promise<Product> {
-    const product = await this.ProductSchema.findById(id);
+    const product = await this.productModel.findById(id);
     return product;
   }
 
   async createOne(createProductDto: CreateProductDto): Promise<Product> {
-    const product = await new this.ProductSchema(createProductDto);
+    const product = await new this.productModel(createProductDto);
     return product.save();
   }
 
@@ -29,7 +29,7 @@ export class ProductService {
     id: string,
     updateProductDto: UpdateProductDto,
   ): Promise<UpdateProductDto> {
-    const product = await this.ProductSchema.findByIdAndUpdate(
+    const product = await this.productModel.findByIdAndUpdate(
       id,
       updateProductDto,
       { new: true },
@@ -38,6 +38,10 @@ export class ProductService {
   }
 
   async deleteOne(id: string): Promise<void> {
-    await this.ProductSchema.findByIdAndDelete(id);
+    await this.productModel.findByIdAndDelete(id);
+  }
+
+  async findBy(data) {
+    return await this.productModel.find(data).exec();
   }
 }

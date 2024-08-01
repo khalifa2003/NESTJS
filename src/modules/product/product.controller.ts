@@ -17,7 +17,7 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Role } from 'src/common/enums/role.enum';
 import { Roles } from 'src/common/decorators/roles.decorator';
-import { ValidateQuantityPipe } from 'src/common/pipes/validate-quantity.pipe';
+import { ValidateProductPipe } from 'src/common/pipes/validate-product.pipe';
 
 @Controller('product')
 export class ProductController {
@@ -36,7 +36,7 @@ export class ProductController {
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.Manager)
-  @UsePipes(ValidateQuantityPipe)
+  @UsePipes(ValidateProductPipe)
   @HttpCode(201)
   async createProduct(@Body() body: CreateProductDto) {
     return this.productService.createOne(body);

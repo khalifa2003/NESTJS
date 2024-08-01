@@ -10,9 +10,6 @@ export type ProductDocument = HydratedDocument<Product>;
   toObject: { virtuals: true },
 })
 export class Product {
-  static findById(productId: any) {
-    throw new Error('Method not implemented.');
-  }
   @Prop({
     required: true,
     trim: true,

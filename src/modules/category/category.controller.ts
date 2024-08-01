@@ -11,12 +11,13 @@ import {
   Param,
   Body,
   UseGuards,
+  UsePipes,
 } from '@nestjs/common';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { DeleteCategoryPipe } from 'src/common/pipes/delete-category.pipe';
+import { ValidateCategoryDelecationPipe } from 'src/common/pipes/validate-delecation.pipe';
 
 @Controller('category')
 export class CategoryController {
@@ -24,12 +25,7 @@ export class CategoryController {
 
   @Get()
   async getCategories() {
-    return this.categoryService.findActiveCategories();
-  }
-
-  @Get('/deleted')
-  async getDeletedCategories() {
-    return this.categoryService.findDeletedCategories();
+    return this.categoryService.findAll();
   }
 
   @Get('/:id')
@@ -37,17 +33,17 @@ export class CategoryController {
     return this.categoryService.findOne(id);
   }
 
+  @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.Manager)
-  @Post()
   @HttpCode(201)
   async createCategory(@Body() body: CreateCategoryDto) {
     return this.categoryService.createOne(body);
   }
 
+  @Patch('/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.Manager)
-  @Patch('/:id')
   async updateCategory(
     @Param('id') id: string,
     @Body() body: UpdateCategoryDto,
@@ -55,20 +51,12 @@ export class CategoryController {
     return this.categoryService.updateOne(id, body);
   }
 
+  @Delete('/:id')
+  @HttpCode(204)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.Manager)
-  @Delete('/soft/:id')
-  @HttpCode(204)
-  async softDelete(@Param('id', DeleteCategoryPipe) id: string) {
-    await this.categoryService.softDelete(id);
-    return { message: 'Category marked as deleted' };
-  }
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Manager)
-  @Delete('/forever/:id')
-  @HttpCode(204)
-  async deletepermanently(@Param('id', DeleteCategoryPipe) id: string) {
+  @UsePipes(ValidateCategoryDelecationPipe)
+  async deleteCategory(@Param() id) {
     return this.categoryService.deleteOne(id);
   }
 }

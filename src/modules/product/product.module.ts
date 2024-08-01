@@ -5,15 +5,21 @@ import { ProductService } from './product.service';
 import { ProductController } from './product.controller';
 import { AuthModule } from '../auth/auth.module';
 import { UserModule } from '../user/user.module';
+import { CategoryModule } from '../category/category.module';
+import { SubcategoryModule } from '../subcategory/subcategory.module';
+import { BrandModule } from '../brand/brand.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
     AuthModule,
     UserModule,
+    CategoryModule,
+    SubcategoryModule,
+    BrandModule,
   ],
   controllers: [ProductController],
   providers: [ProductService],
-  exports: [],
+  exports: [MongooseModule, ProductService],
 })
 export class ProductModule {}

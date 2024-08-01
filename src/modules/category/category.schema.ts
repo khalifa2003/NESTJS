@@ -18,12 +18,6 @@ export class Category {
 
   @Prop({ required: true })
   image: string;
-
-  @Prop({ default: false })
-  isDeleted: boolean;
-
-  @Prop()
-  deletedAt?: Date;
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);
