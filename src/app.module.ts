@@ -15,6 +15,7 @@ import { AddressModule } from './modules/user/address/addres.module';
 import { WishlistModule } from './modules/user/wishlist/wishlist.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { ProductService } from './modules/product/product.service';
+import { SharedModule } from './modules/shared.module';
 
 @Module({
   imports: [
@@ -28,10 +29,10 @@ import { ProductService } from './modules/product/product.service';
     BrandModule,
     SubcategoryModule,
     ProductModule,
+    ReviewModule,
+    AuthModule,
     UserModule,
     CartModule,
-    AuthModule,
-    ReviewModule,
     AddressModule,
     WishlistModule,
     OrdersModule,

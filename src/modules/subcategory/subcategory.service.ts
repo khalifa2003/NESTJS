@@ -1,46 +1,49 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSubcategoryDto } from './dto/create-subcategory.dto';
-import { UpdateCategoryDto } from '../category/dto/update-category.dto';
 import { Subcategory } from './subcategory.schema';
+import { ISubcategoryRepository } from 'src/common/database repos/interfaces/subcategory.repository.interface';
+import { UpdateSubcategoryDto } from './dto/update-subcategory.dto';
 
 @Injectable()
 export class SubcategoryService {
   constructor(
-    @InjectModel(Subcategory.name)
-    private SubcategorySchema: Model<Subcategory>,
+    @Inject('SubcategoryRepository')
+    private readonly subcategoryRepository: ISubcategoryRepository,
   ) {}
 
   async findAll(): Promise<Subcategory[]> {
-    return await this.SubcategorySchema.find().exec();
+    return this.subcategoryRepository.findAll();
   }
 
   async findOne(id: string): Promise<Subcategory> {
-    const subcategory = await this.SubcategorySchema.findById(id);
+    const subcategory = await this.subcategoryRepository.findById(id);
+    if (!subcategory) {
+      throw new NotFoundException(`Product with ID "${id}" not found`);
+    }
     return subcategory;
   }
 
   async createOne(
     createSubcategoryDto: CreateSubcategoryDto,
   ): Promise<Subcategory> {
-    const subcat = await new this.SubcategorySchema(createSubcategoryDto);
-    return subcat.save();
+    return this.subcategoryRepository.create(createSubcategoryDto);
   }
 
   async updateOne(
     id: string,
-    updateCategoryDto: UpdateCategoryDto,
+    updateSubcategoryDto: UpdateSubcategoryDto,
   ): Promise<Subcategory> {
-    const subcategory = await this.SubcategorySchema.findByIdAndUpdate(
+    const subcategory = await this.subcategoryRepository.update(
       id,
-      updateCategoryDto,
-      { new: true },
+      updateSubcategoryDto,
     );
+    if (!subcategory) {
+      throw new NotFoundException(`Product with ID "${id}" not found`);
+    }
     return subcategory;
   }
 
   async deleteOne(id: string): Promise<void> {
-    await this.SubcategorySchema.findByIdAndDelete(id);
+    await this.subcategoryRepository.delete(id);
   }
 }

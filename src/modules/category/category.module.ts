@@ -1,24 +1,26 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CategoryService } from './category.service';
 import { CategoryController } from './category.controller';
 import { Category, CategorySchema } from './category.schema';
-import { ProductService } from '../product/product.service';
 import { AuthModule } from '../auth/auth.module';
 import { UserModule } from '../user/user.module';
-import { Product, ProductSchema } from '../product/product.schema';
-
+import { ProductModule } from '../product/product.module';
+import { CategoryRepository } from 'src/common/database repos/category.repository';
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Category.name, schema: CategorySchema },
     ]),
-    MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
     AuthModule,
     UserModule,
+    forwardRef(() => ProductModule),
   ],
   controllers: [CategoryController],
-  providers: [CategoryService, ProductService],
+  providers: [
+    CategoryService,
+    { provide: 'CategoryRepository', useClass: CategoryRepository },
+  ],
   exports: [MongooseModule],
 })
 export class CategoryModule {}

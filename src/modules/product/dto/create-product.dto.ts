@@ -47,7 +47,7 @@ export class CreateProductDto {
 
   @IsOptional()
   @IsMongoId()
-  brand?: Types.ObjectId;
+  brand: Types.ObjectId;
 
   @IsOptional()
   @IsNumber()

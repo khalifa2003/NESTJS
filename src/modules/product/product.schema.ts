@@ -37,7 +37,7 @@ export class Product {
   category: Types.ObjectId;
 
   @Prop([{ type: Types.ObjectId, ref: 'SubCategory' }])
-  subcategories: Types.ObjectId[];
+  subcategories?: Types.ObjectId[];
 
   @Prop({ type: Types.ObjectId, ref: 'Brand' })
   brand: Types.ObjectId;
@@ -47,10 +47,10 @@ export class Product {
     min: [1, 'Rating must be above or equal 1.0'],
     max: [5, 'Rating must be below or equal 5.0'],
   })
-  ratingsAverage: number;
+  ratingsAverage?: number;
 
   @Prop({ type: Number, default: 0 })
-  ratingsQuantity: number;
+  ratingsQuantity?: number;
 
   @Prop({
     type: {
@@ -64,7 +64,7 @@ export class Product {
     },
     required: true,
   })
-  specs: {
+  specs?: {
     refreshRate: string;
     processor: string;
     graphics: string;
@@ -73,12 +73,6 @@ export class Product {
     memory: string;
     os: string;
   };
-
-  @Prop({ default: false })
-  isDeleted: boolean; // Add this field
-
-  @Prop()
-  deletedAt?: Date;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
