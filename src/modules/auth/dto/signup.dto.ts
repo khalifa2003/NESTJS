@@ -26,4 +26,7 @@ export class SignupDto {
   @IsNotEmpty()
   @MinLength(6)
   password: string;
+
+  @IsNotEmpty()
+  passwordConfirm: string;
 }
