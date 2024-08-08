@@ -8,6 +8,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cors());
   app.enableCors();
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -16,11 +17,7 @@ async function bootstrap() {
       exceptionFactory: (errors) => new BadRequestException(errors),
     }),
   );
-  app.use(cors());
-  app.enableCors();
   app.useGlobalFilters(new HttpExceptionFilter());
-  app.use(cors());
-  app.enableCors();
   await app.listen(3000);
 }
 bootstrap();
