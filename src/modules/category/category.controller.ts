@@ -5,7 +5,7 @@ import {
   Controller,
   Get,
   Post,
-  Patch,
+  Put,
   Delete,
   HttpCode,
   Param,
@@ -41,7 +41,7 @@ export class CategoryController {
     return this.categoryService.createOne(body);
   }
 
-  @Patch('/:id')
+  @Put('/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.Manager)
   async updateCategory(
@@ -56,7 +56,7 @@ export class CategoryController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.Manager)
   @UsePipes(ValidateCategoryDelecationPipe)
-  async deleteCategory(@Param() id) {
+  async deleteCategory(@Param('id') id: string) {
     return this.categoryService.deleteOne(id);
   }
 }

@@ -2,7 +2,7 @@ import {
   Controller,
   Get,
   Post,
-  Patch,
+  Put,
   Delete,
   HttpCode,
   Param,
@@ -41,7 +41,7 @@ export class BrandController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.Manager)
-  @Patch('/:id')
+  @Put('/:id')
   async updateBrand(@Param('id') id: string, @Body() body: UpdateBrandDto) {
     return this.brandService.updateOne(id, body);
   }

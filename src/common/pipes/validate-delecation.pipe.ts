@@ -17,6 +17,6 @@ export class ValidateCategoryDelecationPipe implements PipeTransform {
         `The delecation is forbbiden because the model exists in ${products.length} product`,
       );
     }
-    return true;
+    return value;
   }
 }
