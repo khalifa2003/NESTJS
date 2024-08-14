@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { ISubcategoryRepository } from './interfaces/subcategory.repository.interface';
 import { Subcategory } from 'src/modules/subcategory/subcategory.schema';
 
@@ -19,7 +19,10 @@ export class SubcategoryRepository implements ISubcategoryRepository {
     if (category == '') {
       return this.subcategoryModel.find().exec();
     } else {
-      return await this.subcategoryModel.find({ category }).exec();
+      const categoryObjectId = new Types.ObjectId(category);
+      return await this.subcategoryModel
+        .find({ category: categoryObjectId })
+        .exec();
     }
   }
 

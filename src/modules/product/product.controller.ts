@@ -2,13 +2,13 @@ import {
   Controller,
   Get,
   Post,
-  Patch,
   Delete,
   HttpCode,
   Param,
   Body,
   UseGuards,
   UsePipes,
+  Put,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -42,7 +42,7 @@ export class ProductController {
     return this.productService.createOne(body);
   }
 
-  @Patch('/:id')
+  @Put('/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.Manager)
   async updateProduct(@Param('id') id: string, @Body() body: UpdateProductDto) {

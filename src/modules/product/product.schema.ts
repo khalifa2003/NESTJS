@@ -62,7 +62,7 @@ export class Product {
       memory: { type: String, required: true },
       os: { type: String, required: true },
     },
-    required: true,
+    required: false,
   })
   specs?: {
     refreshRate: string;

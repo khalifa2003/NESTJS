@@ -41,7 +41,6 @@ export class CreateProductDto {
   category: Types.ObjectId;
 
   @IsOptional()
-  @IsArray()
   @IsMongoId()
   subcategory?: Types.ObjectId;
 
