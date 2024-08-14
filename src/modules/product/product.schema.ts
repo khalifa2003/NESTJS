@@ -37,7 +37,7 @@ export class Product {
   category: Types.ObjectId;
 
   @Prop([{ type: Types.ObjectId, ref: 'SubCategory' }])
-  subcategories?: Types.ObjectId[];
+  subcategory?: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'Brand' })
   brand: Types.ObjectId;

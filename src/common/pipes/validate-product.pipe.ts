@@ -24,10 +24,10 @@ export class ValidateProductPipe implements PipeTransform {
       throw new BadRequestException('Brand not found.');
     }
 
-    if (value.subcategories.length > 0) {
+    if (value.subcategory) {
       const subcategory = await this.subcategoryModel
         .find({
-          _id: { $in: value.subcategories },
+          _id: value.subcategory,
         })
         .exec();
       subcategory.map((sub) => {

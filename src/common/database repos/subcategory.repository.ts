@@ -15,8 +15,12 @@ export class SubcategoryRepository implements ISubcategoryRepository {
     return newSubcategory.save();
   }
 
-  async findAll(): Promise<Subcategory[]> {
-    return this.subcategoryModel.find().exec();
+  async findAll(category: string): Promise<Subcategory[]> {
+    if (category == '') {
+      return this.subcategoryModel.find().exec();
+    } else {
+      return await this.subcategoryModel.find({ category }).exec();
+    }
   }
 
   async findById(id: string): Promise<Subcategory> {

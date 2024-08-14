@@ -2,28 +2,29 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { CreateSubcategoryDto } from './dto/create-subcategory.dto';
 import { UpdateSubcategoryDto } from './dto/update-subcategory.dto';
 import { SubcategoryService } from './subcategory.service';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { Role } from 'src/common/enums/role.enum';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 import {
   Controller,
   Get,
   Post,
-  Patch,
   Delete,
   HttpCode,
   Param,
   Body,
   UseGuards,
+  Query,
+  Put,
 } from '@nestjs/common';
-import { Roles } from 'src/common/decorators/roles.decorator';
-import { Role } from 'src/common/enums/role.enum';
-import { RolesGuard } from 'src/common/guards/roles.guard';
 
 @Controller('subcategory')
 export class SubcategoryController {
   constructor(private readonly subcategoryService: SubcategoryService) {}
 
   @Get()
-  async getSubcategories() {
-    return this.subcategoryService.findAll();
+  async getSubcategories(@Query('category') category: string) {
+    return this.subcategoryService.findAll(category);
   }
 
   @Get('/:id')
@@ -41,7 +42,7 @@ export class SubcategoryController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.Manager)
-  @Patch('/:id')
+  @Put('/:id')
   async updateSubcategory(
     @Param('id') id: string,
     @Body() body: UpdateSubcategoryDto,

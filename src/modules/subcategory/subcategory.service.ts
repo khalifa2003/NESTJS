@@ -11,8 +11,8 @@ export class SubcategoryService {
     private readonly subcategoryRepository: ISubcategoryRepository,
   ) {}
 
-  async findAll(): Promise<Subcategory[]> {
-    return this.subcategoryRepository.findAll();
+  async findAll(category: string = ''): Promise<Subcategory[]> {
+    return this.subcategoryRepository.findAll(category);
   }
 
   async findOne(id: string): Promise<Subcategory> {
