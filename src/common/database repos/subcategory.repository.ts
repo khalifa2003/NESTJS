@@ -19,10 +19,7 @@ export class SubcategoryRepository implements ISubcategoryRepository {
     if (category == '') {
       return this.subcategoryModel.find().exec();
     } else {
-      const categoryObjectId = new Types.ObjectId(category);
-      return await this.subcategoryModel
-        .find({ category: categoryObjectId })
-        .exec();
+      return await this.subcategoryModel.find({ category: category }).exec();
     }
   }
 

@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import mongoose from 'mongoose';
 
 export type ProductDocument = HydratedDocument<Product>;
 
@@ -36,8 +37,8 @@ export class Product {
   @Prop({ type: Types.ObjectId, ref: 'Category', required: true })
   category: Types.ObjectId;
 
-  @Prop([{ type: Types.ObjectId, ref: 'SubCategory' }])
-  subcategory?: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'Subcategory', required: true })
+  subcategory: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'Brand' })
   brand: Types.ObjectId;
@@ -74,5 +75,21 @@ export class Product {
     os: string;
   };
 }
-
 export const ProductSchema = SchemaFactory.createForClass(Product);
+
+ProductSchema.pre(/^find/, function (next) {
+  const query = this as mongoose.Query<any, any>;
+  query.populate({
+    path: 'category',
+    select: ['name', 'image'],
+  });
+  query.populate({
+    path: 'brand',
+    select: ['name', 'image'],
+  });
+  query.populate({
+    path: 'subcategory',
+    select: ['name', 'category'],
+  });
+  next();
+});

@@ -7,14 +7,14 @@ import { Role } from 'src/common/enums/role.enum';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import {
   Controller,
-  Get,
-  Post,
-  Delete,
-  HttpCode,
-  Param,
-  Body,
   UseGuards,
+  HttpCode,
+  Delete,
+  Param,
   Query,
+  Post,
+  Body,
+  Get,
   Put,
 } from '@nestjs/common';
 

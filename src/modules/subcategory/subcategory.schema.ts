@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document, Types } from 'mongoose';
-import { Category } from '../category/category.schema';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Subcategory {
@@ -12,8 +11,16 @@ export class Subcategory {
   })
   name: string;
 
-  @Prop({ type: Types.ObjectId, ref: Category.name, required: true })
+  @Prop({ type: Types.ObjectId, ref: 'Category', required: true })
   category: Types.ObjectId;
 }
 
 export const SubcategorySchema = SchemaFactory.createForClass(Subcategory);
+SubcategorySchema.pre(/^find/, function (next) {
+  const query = this as mongoose.Query<any, any>;
+  query.populate({
+    path: 'category',
+    select: ['name', 'image'],
+  });
+  next();
+});
