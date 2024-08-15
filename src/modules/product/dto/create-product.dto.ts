@@ -43,8 +43,8 @@ export class CreateProductDto {
   @IsNotEmpty()
   @IsMongoId()
   subcategory: Types.ObjectId;
-
-  @IsOptional()
+  
+  @IsNotEmpty()
   @IsMongoId()
   brand: Types.ObjectId;
 

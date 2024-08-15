@@ -18,8 +18,46 @@ export class ProductRepository implements IProductRepository {
     return newProduct.save();
   }
 
-  async findAll(): Promise<Product[]> {
-    return this.productModel.find().exec();
+  async findAll(queryParams: any): Promise<Product[]> {
+    // return this.productModel.find().exec();
+
+    const query: any = {};
+
+    if (queryParams) {
+      const keys = Object.keys(queryParams);
+      const values: any = Object.values(queryParams);
+
+      for (let i = 0; i < keys.length; i++) {
+        if (values[i] == '') {
+          continue;
+        } else if (keys[i] === 'min' || keys[i] === 'max') {
+          query[keys[i]] = +values[i];
+        } else if (
+          keys[i] === 'category' ||
+          keys[i] === 'brand' ||
+          keys[i] === 'subcategory'
+        ) {
+          if (values[i].includes(',')) {
+            query[keys[i]] = { $in: values[i].split(',') };
+          } else {
+            query[keys[i]] = values[i];
+          }
+        } else {
+          query[keys[i]] = new RegExp(values[i], 'i');
+        }
+      }
+    }
+
+    let documents = await this.productModel.find(query).exec();
+
+    if (queryParams.min && queryParams.max) {
+      documents = documents.filter(
+        (product) =>
+          product.price >= queryParams.min && product.price <= queryParams.max,
+      );
+    }
+
+    return documents;
   }
 
   async findById(id: string): Promise<Product> {

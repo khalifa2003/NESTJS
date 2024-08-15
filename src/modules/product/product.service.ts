@@ -11,8 +11,8 @@ export class ProductService {
     private readonly productRepository: IProductRepository,
   ) {}
 
-  async findAll(): Promise<Product[]> {
-    return this.productRepository.findAll();
+  async findAll(queryParams: any): Promise<Product[]> {
+    return this.productRepository.findAll(queryParams);
   }
 
   async findOne(id: string): Promise<Product> {

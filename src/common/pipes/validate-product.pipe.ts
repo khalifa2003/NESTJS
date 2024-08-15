@@ -24,19 +24,14 @@ export class ValidateProductPipe implements PipeTransform {
       throw new BadRequestException('Brand not found.');
     }
 
-    if (value.subcategory) {
-      const subcategory = await this.subcategoryModel
-        .find({
-          _id: value.subcategory,
-        })
-        .exec();
-      subcategory.map((sub) => {
-        if (sub.category != value.category) {
-          throw new BadRequestException(
-            `Subcategory ${sub.name} not belong to this ${value.category}`,
-          );
-        }
-      });
+    const subcategory = await this.subcategoryModel
+      .findById(value.subcategory)
+      .exec();
+
+    if (subcategory.category._id != value.category) {
+      throw new BadRequestException(
+        `Subcategory ${subcategory.name} not belong to this ${value.category}`,
+      );
     }
 
     if (!value.quantity || value.quantity <= 0) {
