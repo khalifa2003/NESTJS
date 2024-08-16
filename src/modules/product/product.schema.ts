@@ -31,6 +31,9 @@ export class Product {
   })
   price: number;
 
+  @Prop({ type: Number,  default: 0 })
+  discount: number;
+
   @Prop({ required: true })
   images: string[];
 
@@ -74,6 +77,9 @@ export class Product {
     memory: string;
     os: string;
   };
+
+  @Prop({ type: Number, default: 0 })
+  sold?: number;
 }
 export const ProductSchema = SchemaFactory.createForClass(Product);
 
@@ -89,7 +95,14 @@ ProductSchema.pre(/^find/, function (next) {
   });
   query.populate({
     path: 'subcategory',
-    select: ['name', 'category'],
+    select: ['name'],
   });
   next();
+});
+
+ProductSchema.virtual('priceAfterDiscount').get(function () {
+  if (this.discount && this.discount > 0) {
+    return this.price - (this.price * this.discount) / 100;
+  }
+  return this.price;
 });

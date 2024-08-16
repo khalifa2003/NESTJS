@@ -43,7 +43,7 @@ export class CreateProductDto {
   @IsNotEmpty()
   @IsMongoId()
   subcategory: Types.ObjectId;
-  
+
   @IsNotEmpty()
   @IsMongoId()
   brand: Types.ObjectId;
@@ -68,4 +68,10 @@ export class CreateProductDto {
     memory: string;
     os: string;
   };
+
+  @IsOptional()
+  sold?: number;
+  
+  @IsOptional()
+  discount: number;
 }
