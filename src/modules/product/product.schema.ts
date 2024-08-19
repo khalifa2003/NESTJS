@@ -31,7 +31,7 @@ export class Product {
   })
   price: number;
 
-  @Prop({ type: Number,  default: 0 })
+  @Prop({ type: Number, default: 0 })
   discount: number;
 
   @Prop({ required: true })
@@ -105,4 +105,13 @@ ProductSchema.virtual('priceAfterDiscount').get(function () {
     return this.price - (this.price * this.discount) / 100;
   }
   return this.price;
+});
+ProductSchema.virtual('stock').get(function () {
+  if (this.quantity === 0) {
+    return 'OUTOFSTOCK';
+  } else if (this.quantity > 0 && this.quantity <= 10) {
+    return 'LOWSTOCK';
+  } else {
+    return 'INSTOCK';
+  }
 });
