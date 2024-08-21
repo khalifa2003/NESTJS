@@ -11,10 +11,6 @@ export class CreateUserDto {
 
   @IsString()
   @IsOptional()
-  slug?: string;
-
-  @IsString()
-  @IsOptional()
   phone?: string;
 
   @IsEmail()

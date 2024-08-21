@@ -38,10 +38,12 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
+
     const user = await this.userModel.findOne({ email });
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('Incorrect email or password');
     }
+
     const token = this.jwtService.sign(
       { userId: user._id },
       { secret: process.env.JWT_SECRET_KEY },

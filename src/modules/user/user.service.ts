@@ -1,10 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcryptjs';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class UserService {
@@ -48,17 +53,36 @@ export class UserService {
     }
   }
 
-  async updatePassword(id: string, newPassword: string): Promise<User> {
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    const updatedUser = await this.userModel.findByIdAndUpdate(
-      id,
-      { password: hashedPassword, passwordChangedAt: Date.now() },
-      { new: true },
-    );
-    if (!updatedUser) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+  async updatePassword(_id: string, changePasswordDto: ChangePasswordDto) {
+    const { currentPassword, password, passwordConfirm } = changePasswordDto;
+
+    // 1) Verify user exists
+    const user = await this.userModel.findById(_id);
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
-    return updatedUser;
+
+    // 2) Verify current password
+    const isCorrectPassword = await bcrypt.compare(
+      currentPassword,
+      user.password,
+    );
+    if (!isCorrectPassword) {
+      throw new BadRequestException('Incorrect current password');
+    }
+
+    // 3) Verify password confirmation
+    if (password !== passwordConfirm) {
+      throw new BadRequestException('Password confirmation does not match');
+    }
+
+    // 4) Hash the new password and update the user
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    user.passwordChangedAt = new Date();
+
+    await user.save();
+    return { message: 'Password updated successfully' };
   }
 
   async updateLoggedUser(
