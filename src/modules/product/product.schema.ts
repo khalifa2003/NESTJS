@@ -106,6 +106,7 @@ ProductSchema.virtual('priceAfterDiscount').get(function () {
   }
   return this.price;
 });
+
 ProductSchema.virtual('stock').get(function () {
   if (this.quantity === 0) {
     return 'OUTOFSTOCK';

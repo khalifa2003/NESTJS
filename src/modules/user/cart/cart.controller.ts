@@ -7,64 +7,86 @@ import {
   Param,
   Patch,
   Post,
+  Put,
+  Req,
   UseGuards,
 } from '@nestjs/common';
-import { CartServeice } from './cart.service';
+import { CartService } from './cart.service';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Role } from 'src/common/enums/role.enum';
+import { UpdateCartDto } from './dto/update-cart.dto';
+import { AddToCart } from './dto/add-to-cart.dto';
 
-@Controller('product')
+@Controller('cart')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.Admin, Role.Manager, Role.User)
 export class CartController {
-  constructor(private cartServeice: CartServeice) {}
-  // @desc    Add product to  cart
-  // @route   POST /api/v1/cart
-  // @access  Private/User
+  constructor(private cartService: CartService) {}
+
   @Post()
   @HttpCode(201)
-  async addProductToCart(@Body() body: any) {
-    this.cartServeice.addOneToCart(body);
+  async addProductToCart(@Req() req, @Body() addToCart: AddToCart) {
+    const cart = await this.cartService.addProductToCart(
+      req.user._id,
+      addToCart,
+    );
+    return {
+      status: 'success',
+      message: 'Product added to cart successfully',
+      numOfCartItems: cart.cartItems.length,
+      data: cart,
+    };
   }
 
-  // @desc    Get logged user cart
-  // @route   GET /api/v1/cart
-  // @access  Private/User
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.User)
-  @Get('/:id')
-  async getLoggedUserCart(@Body() body: any) {
-    this.cartServeice.getCart(body);
+  @Get('')
+  async getLoggedUserCart(@Req() req) {
+    const cart = await this.cartService.getLoggedUserCart(req.user._id);
+    return {
+      status: 'success',
+      numOfCartItems: cart.cartItems.length,
+      data: cart,
+    };
   }
 
-  // @desc    Remove specific cart item
-  // @route   DELETE /api/v1/cart/:itemId
-  // @access  Private/User
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.User)
-  @Patch('/:id')
-  async removeSpecificCartItem(@Body() body: any, @Param() params) {
-    this.cartServeice.removeOneFromCart(body, params);
+  @Delete(':itemId') async removeSpecificCartItem(
+    @Req() req,
+    @Param('itemId') itemId: string,
+  ) {
+    const cart = await this.cartService.removeSpecificCartItem(
+      req.user._id,
+      itemId,
+    );
+    return {
+      status: 'success',
+      numOfCartItems: cart.cartItems.length,
+      data: cart,
+    };
   }
 
-  // @desc    clear logged user cart
-  // @route   DELETE /api/v1/cart
-  // @access  Private/User
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.User)
-  @Delete('/:id')
+  @Delete('')
   @HttpCode(204)
-  async clearCart(@Body() body: any) {
-    this.cartServeice.clear(body.user._id);
+  async clearCart(@Req() req) {
+    await this.cartService.clearCart(req.user._id);
+    return { status: 'success', message: 'Cart cleared successfully' };
   }
 
-  // @desc    Update specific cart item quantity
-  // @route   PUT /api/v1/cart/:itemId
-  // @access  Private/User
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.User)
-  @Patch('/:id')
-  async updateCartItemQuantity(@Body() body: any, @Param() params) {
-    this.cartServeice.updateQuantity(body, params);
+  @Put('/:id')
+  async updateCartItemQuantity(
+    @Req() req,
+    @Param('id') id: string,
+    @Body() updateCartDto: UpdateCartDto,
+  ) {
+    const cart = await this.cartService.updateCartItemQuantity(
+      req.user._id,
+      id,
+      updateCartDto,
+    );
+    return {
+      status: 'success',
+      numOfCartItems: cart.cartItems.length,
+      data: cart,
+    };
   }
 }

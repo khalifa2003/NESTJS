@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 
 export type CartDocument = HydratedDocument<Cart>;
 
@@ -7,32 +7,34 @@ export type CartDocument = HydratedDocument<Cart>;
 export class Cart {
   @Prop([
     {
-      _id: Types.ObjectId,
-      product: {
-        type: Types.ObjectId,
-        ref: 'Product',
-        required: true,
-      },
+      _id: { type: Types.ObjectId, auto: true },
+      product: { type: Types.ObjectId, ref: 'Product' },
       quantity: { type: Number, default: 1 },
       price: { type: Number },
-      createdAt: { type: Date, default: Date.now },
     },
   ])
-  cartItems: [
-    {
-      _id?: Types.ObjectId;
-      product: Types.ObjectId;
-      quantity: number;
-      price: number;
-      createdAt: Date;
-    },
-  ];
+  cartItems: {
+    _id: Types.ObjectId;
+    product: Types.ObjectId;
+    quantity: number;
+    price: number;
+  }[];
 
   @Prop()
   totalCartPrice: number;
+
+  @Prop()
+  totalPriceAfterDiscount?: number;
 
   @Prop({ type: Types.ObjectId, ref: 'User' })
   user: Types.ObjectId;
 }
 
 export const CartSchema = SchemaFactory.createForClass(Cart);
+
+CartSchema.virtual('populatedCartItems', {
+  ref: 'Product', // Model to use
+  localField: 'cartItems.product', // Field in Cart schema
+  foreignField: '_id', // Field in Product schema
+  justOne: false,
+});

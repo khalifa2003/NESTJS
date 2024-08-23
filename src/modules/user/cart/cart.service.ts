@@ -1,24 +1,40 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Cart } from './cart.schema';
+import { Cart, CartDocument } from './cart.schema';
 import { Product } from 'src/modules/product/product.schema';
+import { AddToCart } from './dto/add-to-cart.dto';
+import { ObjectId } from 'mongodb';
+import { UpdateCartDto } from './dto/update-cart.dto';
 
 @Injectable()
-export class CartServeice {
+export class CartService {
   constructor(
-    @InjectModel(Product.name) private ProductSchema: Model<Product>,
-    @InjectModel(Cart.name) private CartSchema: Model<Cart>,
+    @InjectModel(Product.name) private productModel: Model<Product>,
+    @InjectModel(Cart.name) private cartModel: Model<Cart>,
   ) {}
 
-  async addOneToCart(body) {
-    const productId = body.product;
-    const product = await this.ProductSchema.findById(productId);
-    let cart = await this.CartSchema.findOne({ user: body.user._id });
+  private calcTotalCartPrice(cart: CartDocument): number {
+    let totalPrice = 0;
+    cart.cartItems.forEach((item) => {
+      totalPrice += item.quantity * item.price;
+    });
+    cart.totalCartPrice = totalPrice;
+    return totalPrice;
+  }
+
+  async addProductToCart(
+    userId: string,
+    addToCart: AddToCart,
+  ): Promise<CartDocument> {
+    const { productId } = addToCart;
+    const product = await this.productModel.findById(productId);
+    if (!product) throw new NotFoundException('Product not found');
+
+    let cart = await this.cartModel.findOne({ user: userId });
     if (!cart) {
-      // create cart fot logged user with product
-      cart = await this.CartSchema.create({
-        user: body.user._id,
+      cart = await this.cartModel.create({
+        user: userId,
         cartItems: [{ product: productId, price: product.price }],
       });
     } else {
@@ -26,85 +42,63 @@ export class CartServeice {
         (item) => item.product.toString() === productId,
       );
       if (productIndex > -1) {
-        const cartItem = cart.cartItems[productIndex];
-        cartItem.quantity += 1;
-        cart.cartItems[productIndex] = cartItem;
+        cart.cartItems[productIndex].quantity += 1;
       } else {
         cart.cartItems.push({
-          product: productId,
-          price: product.price,
-          quantity: 0,
-          createdAt: undefined,
+          _id: new ObjectId(),
+          product: new ObjectId(productId),
+          price: product.price - (product.price * product.discount) / 100,
+          quantity: 1,
         });
       }
     }
-    // Calculate total cart price
-    calcTotalCartPrice(cart);
-    await cart.save();
 
+    this.calcTotalCartPrice(cart);
+    return cart.save();
+  }
+
+  async getLoggedUserCart(userId: string): Promise<CartDocument> {
+    const cart = await this.cartModel
+      .findOne({ user: userId })
+      .populate('cartItems.product');
+    if (!cart) throw new NotFoundException('Cart not found for user');
     return cart;
   }
 
-  async getCart(body) {
-    const cart = await this.CartSchema.findOne({ user: body.user._id });
-    if (!cart) {
-      return new Error(`There is no cart for this user id : ${body.user._id}`);
-    }
-    return cart;
-  }
-
-  async removeOneFromCart(body, params) {
-    const cart = await this.CartSchema.findOneAndUpdate(
-      { user: body.user._id },
-      {
-        $pull: { cartItems: { _id: params.itemId } },
-      },
+  async removeSpecificCartItem(
+    userId: string,
+    itemId: string,
+  ): Promise<CartDocument> {
+    const cart = await this.cartModel.findOneAndUpdate(
+      { user: userId },
+      { $pull: { cartItems: { _id: itemId } } },
       { new: true },
     );
-    calcTotalCartPrice(cart);
-    cart.save();
-
-    return cart;
+    if (!cart) throw new NotFoundException('Cart not found for user');
+    this.calcTotalCartPrice(cart);
+    return cart.save();
   }
 
-  async clear(id: string) {
-    await this.CartSchema.findOneAndDelete({ user: id });
-    return;
+  async clearCart(userId: string): Promise<void> {
+    await this.cartModel.findOneAndDelete({ user: userId });
   }
 
-  async updateQuantity(body, params) {
-    const cart = await this.CartSchema.findOne({ user: body.user._id });
-    if (!cart) {
-      return new Error(`there is no cart for user ${body.user._id}`);
-      // return next(
-      //   new ApiError(`there is no cart for user ${body.user._id}`, 404),
-      // );
-    }
+  async updateCartItemQuantity(
+    userId: string,
+    itemId: string,
+    updateCartDto: UpdateCartDto,
+  ): Promise<CartDocument> {
+    const { quantity } = updateCartDto;
+    const cart = await this.cartModel.findOne({ user: userId });
+    if (!cart) throw new NotFoundException('Cart not found for user');
+
     const itemIndex = cart.cartItems.findIndex(
-      (item) => item._id.toString() === params.itemId,
+      (item) => item._id.toString() === itemId,
     );
-    if (itemIndex > -1) {
-      const cartItem = cart.cartItems[itemIndex];
-      cartItem.quantity = +body.quantity;
-      cart.cartItems[itemIndex] = cartItem;
-    } else {
-      return new Error(`there is no item for this id :${params.itemId}`);
-      // return next(
-      //   new ApiError(`there is no item for this id :${req.params.itemId}`, 404),
-      // );
-    }
-    calcTotalCartPrice(cart);
-    await cart.save();
+    if (itemIndex === -1) throw new NotFoundException('Cart item not found');
 
-    return cart;
+    cart.cartItems[itemIndex].quantity = quantity;
+    this.calcTotalCartPrice(cart);
+    return cart.save();
   }
 }
-
-const calcTotalCartPrice = (cart) => {
-  let totalPrice = 0;
-  cart.cartItems.forEach((item) => {
-    totalPrice += item.quantity * item.price;
-  });
-  cart.totalCartPrice = totalPrice;
-  return totalPrice;
-};
