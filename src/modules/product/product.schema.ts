@@ -80,7 +80,11 @@ export class Product {
 
   @Prop({ type: Number, default: 0 })
   sold?: number;
+
+  @Prop({ type: Types.ObjectId, ref: 'Product', default: [], required: false })
+  wishlist?: Types.ObjectId[];
 }
+
 export const ProductSchema = SchemaFactory.createForClass(Product);
 
 ProductSchema.pre(/^find/, function (next) {

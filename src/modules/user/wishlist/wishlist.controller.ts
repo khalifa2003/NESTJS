@@ -1,25 +1,43 @@
+import { WishlistService } from './wishlist.service';
+import { AddToWishlistDto } from './dto/add-to-wishlist.dto';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { Role } from 'src/common/enums/role.enum';
 import {
   Controller,
   Post,
   Delete,
   Get,
-  Param,
   Body,
+  Param,
   Req,
+  HttpException,
+  HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
-import { WishlistService } from './wishlist.service';
 
 @Controller('wishlist')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.Admin, Role.Manager, Role.User)
 export class WishlistController {
   constructor(private readonly wishlistService: WishlistService) {}
 
   @Post()
-  async addProductToWishlist(@Req() req, @Body('productId') productId: string) {
-    const userId = req.user._id; // Adjust according to your auth setup
+  async addProductToWishlist(
+    @Req() req,
+    @Body() addToWishlistDto: AddToWishlistDto,
+  ) {
+    const userId = req.user._id;
+    const { productId } = addToWishlistDto;
+
     const user = await this.wishlistService.addProductToWishlist(
       userId,
       productId,
     );
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
     return {
       status: 'success',
       message: 'Product added successfully to your wishlist.',
@@ -32,11 +50,17 @@ export class WishlistController {
     @Req() req,
     @Param('productId') productId: string,
   ) {
-    const userId = req.user._id; // Adjust according to your auth setup
+    const userId = req.user._id;
+
     const user = await this.wishlistService.removeProductFromWishlist(
       userId,
       productId,
     );
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
     return {
       status: 'success',
       message: 'Product removed successfully from your wishlist.',
@@ -45,9 +69,14 @@ export class WishlistController {
   }
 
   @Get()
-  async getLoggedUserWishlist(@Req() req) {
-    const userId = req.user._id; // Adjust according to your auth setup
+  async getUserWishlist(@Req() req) {
+    const userId = req.user._id;
     const user = await this.wishlistService.getUserWishlist(userId);
+
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
     return {
       status: 'success',
       results: user.wishlist.length,

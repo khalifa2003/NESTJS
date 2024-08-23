@@ -1,4 +1,4 @@
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -12,10 +12,9 @@ import { CartModule } from './modules/user/cart/cart.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ReviewModule } from './modules/review/review.module';
 import { AddressModule } from './modules/user/address/addres.module';
-import { WishlistModule } from './modules/user/wishlist/wishlist.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { ProductService } from './modules/product/product.service';
-import { SharedModule } from './modules/shared.module';
+import { WishlistModule } from './modules/user/wishlist/wishlist.module';
 
 @Module({
   imports: [
