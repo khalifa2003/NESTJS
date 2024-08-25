@@ -1,4 +1,3 @@
-
 import {
   Controller,
   Get,
@@ -34,15 +33,15 @@ export class ReviewController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.User)
+  @Roles(Role.User, Role.Admin, Role.Manager)
   createReview(@Body() createReviewDto: CreateReviewDto, @Req() req) {
-    createReviewDto.user = req.user._id; // Set user ID from JWT
+    createReviewDto.user = req.user._id;
     return this.reviewService.createReview(createReviewDto);
   }
 
   @Put(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.User)
+  @Roles(Role.User, Role.Admin, Role.Manager)
   updateReview(
     @Param('id') id: string,
     @Body() updateReviewDto: CreateReviewDto,
@@ -52,8 +51,9 @@ export class ReviewController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Manager)
+  @Roles(Role.User, Role.Admin, Role.Manager)
   deleteReview(@Param('id') id: string) {
     return this.reviewService.deleteReview(id);
   }
 }
+ 
