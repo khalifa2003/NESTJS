@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Address } from './address.schema';
 import { User } from '../user.schema';
+import { CreateAddressDto } from './dto/create-address.dto';
 
 @Injectable()
 export class AddressService {
@@ -10,7 +10,7 @@ export class AddressService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
-  async addAddress(userId: string, address: Address) {
+  async addAddress(userId: string, address: CreateAddressDto) {
     return this.userModel.findByIdAndUpdate(
       userId,
       { $addToSet: { addresses: address } },

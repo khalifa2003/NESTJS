@@ -11,16 +11,25 @@ import {
 import { AddressService } from './address.service';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { Address } from './address.schema';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Role } from 'src/common/enums/role.enum';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { CreateAddressDto } from './dto/create-address.dto';
 
-@Controller('addresses')
+@Controller('address')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.User)
 @UseGuards(JwtAuthGuard)
 export class AddressController {
   constructor(private readonly addressService: AddressService) {}
 
-  @Post('add')
-  async addAddress(@Req() req, @Body() address: Address) {
+  @Post()
+  async addAddress(@Req() req, @Body() createAddressDto: CreateAddressDto) {
     const userId = req.user._id;
-    const updatedUser = await this.addressService.addAddress(userId, address);
+    const updatedUser = await this.addressService.addAddress(
+      userId,
+      createAddressDto,
+    );
     return {
       status: 'success',
       message: 'Address Added Successfully',
@@ -28,7 +37,7 @@ export class AddressController {
     };
   }
 
-  @Delete('remove/:addressId')
+  @Delete(':addressId')
   async removeAddress(@Req() req, @Param('addressId') addressId: string) {
     const userId = req.user._id;
     const updatedUser = await this.addressService.removeAddress(
