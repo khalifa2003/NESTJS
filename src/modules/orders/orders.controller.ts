@@ -2,77 +2,51 @@ import {
   Controller,
   Post,
   Body,
-  Get,
   Param,
-  Patch,
-  UseGuards,
   Req,
-  Res,
-  RawBodyRequest,
+  UseGuards,
+  Put,
+  Get,
+  Delete,
 } from '@nestjs/common';
-import { OrdersService } from './orders.service';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { Request, Response } from 'express';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { Role } from 'src/common/enums/role.enum';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { OrderService } from './orders.service';
 import { Order } from './orders.schema';
 
 @Controller('orders')
-export class OrdersController {
-  constructor(private readonly ordersService: OrdersService) {}
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.Admin, Role.Manager, Role.User)
+export class OrderController {
+  constructor(private readonly orderService: OrderService) {}
 
-  @Post('cash')
-  @UseGuards(JwtAuthGuard)
-  async createCashOrder(
-    @Body() createOrderDto: CreateOrderDto,
-    @Req() req,
-  ): Promise<Order> {
-    return this.ordersService.createCashOrder({
-      ...createOrderDto,
-      user: req.user._id,
-    });
-  }
-
-  @Get(':id')
-  async getOrderById(@Param('id') orderId: string): Promise<Order> {
-    return this.ordersService.getOrderById(orderId);
-  }
-
-  @Get('user/:userId')
-  @UseGuards(JwtAuthGuard)
-  async getOrdersByUserId(@Param('userId') userId: string): Promise<Order[]> {
-    return this.ordersService.getOrdersByUserId(userId);
+  @Post()
+  async createOrder(@Body() orderData: Partial<Order>): Promise<Order> {
+    return this.orderService.createOrder(orderData);
   }
 
   @Get()
-  async findAllOrders(): Promise<Order[]> {
-    return this.ordersService.findAllOrders();
+  async getAllOrders(): Promise<Order[]> {
+    return this.orderService.getAllOrders();
   }
 
-  @Patch(':id/paid')
-  async updateOrderToPaid(@Param('id') orderId: string): Promise<Order> {
-    return this.ordersService.updateOrderToPaid(orderId);
+  @Get(':id')
+  async getOrderById(@Param('id') id: string): Promise<Order> {
+    return this.orderService.getOrderById(id);
   }
 
-  @Patch(':id/delivered')
-  async updateOrderToDelivered(@Param('id') orderId: string): Promise<Order> {
-    return this.ordersService.updateOrderToDelivered(orderId);
+  @Put(':id')
+  async updateOrder(
+    @Param('id') id: string,
+    @Body() updateData: Partial<Order>,
+  ): Promise<Order> {
+    return this.orderService.updateOrder(id, updateData);
   }
 
-  @Post('checkout')
-  @UseGuards(JwtAuthGuard)
-  async checkoutSession(@Req() req): Promise<any> {
-    return this.ordersService.checkoutSession(req.user._id, req.body.cartItems);
-  }
-
-  @Post('webhook')
-  async webhookCheckout(
-    @Req() req: RawBodyRequest<Request>,
-    @Res() res: Response,
-  ): Promise<void> {
-    await this.ordersService.webhookCheckout({
-      rawBody: req.rawBody,
-      headers: req.headers,
-    });
-    res.status(200).send();
+  @Delete(':id')
+  async deleteOrder(@Param('id') id: string): Promise<Order> {
+    return this.orderService.deleteOrder(id);
   }
 }

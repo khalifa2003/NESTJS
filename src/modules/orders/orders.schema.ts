@@ -1,34 +1,58 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
 @Schema({ timestamps: true })
-export class Order extends Document {
+export class Order {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   user: Types.ObjectId;
 
+  @Prop([
+    {
+      product: { type: Types.ObjectId, ref: 'Product' },
+      quantity: Number,
+      price: Number,
+    },
+  ])
+  cartItems: {
+    product: Types.ObjectId;
+    quantity: number;
+    price: number;
+  }[];
+
+  @Prop({ type: Number, default: 0 })
+  taxPrice: number;
+
   @Prop({
-    type: [
-      {
-        product: { type: Types.ObjectId, ref: 'Product', required: true },
-        quantity: { type: Number, required: true },
-        price: { type: Number, required: true },
-      },
-    ],
-    required: true,
+    type: {
+      address: String,
+      phone: String,
+      city: String,
+      postalCode: String,
+      state: String,
+      country: String,
+    },
   })
-  products: Array<{ product: Types.ObjectId; quantity: number; price: number }>;
+  shippingAddress: {
+    address: string;
+    phone: string;
+    city: string;
+    postalCode: string;
+    state: string;
+    country: string;
+  };
 
-  @Prop({ required: true })
-  totalAmount: number;
+  @Prop({ type: Number, default: 0 })
+  shippingPrice: number;
 
-  @Prop({ type: String, enum: ['pending', 'processed', 'shipped', 'delivered', 'cancelled'], default: 'pending' })
-  status: string;
+  @Prop({ type: Number })
+  totalOrderPrice: number;
 
-  @Prop({ type: Types.ObjectId, ref: 'Address', required: true })
-  shippingAddress: Types.ObjectId;
-
-  @Prop({ default: Date.now })
-  createdAt: Date;
+  @Prop({
+    type: String,
+    enum: ['card', 'cash'],
+    default: 'cash',
+  })
+  paymentMethodType: string;
 
   @Prop({ type: Boolean, default: false })
   isPaid: boolean;
@@ -44,3 +68,17 @@ export class Order extends Document {
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);
+
+OrderSchema.pre(/^find/, function (next) {
+  const query = this as mongoose.Query<any, any>;
+  query
+    .populate({
+      path: 'user',
+      select: ['fname', 'lname', 'image', 'email', 'phone'],
+    })
+    .populate({
+      path: 'cartItems.product',
+      select: 'title imageCover',
+    });
+  next();
+});
