@@ -46,12 +46,9 @@ export class OrderController {
   }
 
   @Roles(Role.Admin, Role.Manager)
-  @Put(':id')
-  async updateOrder(
-    @Param('id') id: string,
-    @Body() updateData: Partial<Order>,
-  ): Promise<Order> {
-    return this.orderService.updateOrder(id, updateData);
+  @Put('delivered/:orderId')
+  async updateOrderToDelivered(@Param('orderId') orderId: string) {
+    return this.orderService.updateOrderToDelivered(orderId);
   }
 
   @Roles(Role.Admin, Role.Manager)

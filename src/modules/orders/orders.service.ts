@@ -1,16 +1,17 @@
-// src/orders/order.service.ts
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Order } from './orders.schema';
 import { Cart } from '../user/cart/cart.schema';
 import { User } from '../user/user.schema';
+import { Product } from '../product/product.schema';
 
 @Injectable()
 export class OrderService {
   constructor(
     @InjectModel(Order.name) private readonly orderModel: Model<Order>,
     @InjectModel(Cart.name) private readonly cartModel: Model<Cart>,
+    @InjectModel(Product.name) private readonly productModel: Model<Product>,
   ) {}
 
   async createOrder(
@@ -48,6 +49,7 @@ export class OrderService {
           update: { $inc: { quantity: -item.quantity, sold: +item.quantity } },
         },
       }));
+      await this.productModel.bulkWrite(bulkOption, {});
 
       // 5) Clear cart depend on cartId
       await this.cartModel.findByIdAndDelete(cartId);
@@ -63,9 +65,13 @@ export class OrderService {
     return this.orderModel.find().exec();
   }
 
-  async updateOrder(id: string, updateData: Partial<Order>): Promise<Order> {
+  async updateOrderToDelivered(id: string): Promise<Order> {
     return this.orderModel
-      .findByIdAndUpdate(id, updateData, { new: true })
+      .findByIdAndUpdate(
+        id,
+        { isDelivered: true, deliveredAt: new Date() },
+        { new: true },
+      )
       .exec();
   }
 
