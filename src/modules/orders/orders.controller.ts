@@ -16,27 +16,36 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { OrderService } from './orders.service';
 import { Order } from './orders.schema';
 
-@Controller('orders')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.Admin, Role.Manager, Role.User)
+@Controller('orders')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Post()
-  async createOrder(@Body() orderData: Partial<Order>): Promise<Order> {
-    return this.orderService.createOrder(orderData);
+  // User
+  @Roles(Role.User)
+  @Post(':cartId')
+  async createOrder(
+    @Body() orderData: Partial<Order>,
+    @Param('cartId') cartId: string,
+    @Req() req,
+  ): Promise<Order> {
+    return this.orderService.createOrder(orderData, cartId, req.user);
   }
 
+  @Roles(Role.User)
+  @Get('/userOrders')
+  async getOrdersForUser(@Req() req): Promise<Order[]> {
+    return this.orderService.getLoggedUserOrders(req.user._id);
+  }
+
+  // Admin
+  @Roles(Role.Admin, Role.Manager)
   @Get()
   async getAllOrders(): Promise<Order[]> {
     return this.orderService.getAllOrders();
   }
 
-  @Get(':id')
-  async getOrderById(@Param('id') id: string): Promise<Order> {
-    return this.orderService.getOrderById(id);
-  }
-
+  @Roles(Role.Admin, Role.Manager)
   @Put(':id')
   async updateOrder(
     @Param('id') id: string,
@@ -45,6 +54,7 @@ export class OrderController {
     return this.orderService.updateOrder(id, updateData);
   }
 
+  @Roles(Role.Admin, Role.Manager)
   @Delete(':id')
   async deleteOrder(@Param('id') id: string): Promise<Order> {
     return this.orderService.deleteOrder(id);
