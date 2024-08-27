@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export type CartDocument = HydratedDocument<Cart>;
 
@@ -33,8 +33,8 @@ export class Cart {
 export const CartSchema = SchemaFactory.createForClass(Cart);
 
 CartSchema.virtual('populatedCartItems', {
-  ref: 'Product', // Model to use
-  localField: 'cartItems.product', // Field in Cart schema
-  foreignField: '_id', // Field in Product schema
+  ref: 'Product',
+  localField: 'cartItems.product',
+  foreignField: '_id',
   justOne: false,
 });

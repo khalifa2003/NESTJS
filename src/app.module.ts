@@ -15,6 +15,7 @@ import { AddressModule } from './modules/user/address/addres.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { ProductService } from './modules/product/product.service';
 import { WishlistModule } from './modules/user/wishlist/wishlist.module';
+import { AdminModule } from './modules/admin/admin.module.';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { WishlistModule } from './modules/user/wishlist/wishlist.module';
     AddressModule,
     WishlistModule,
     OrdersModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService, ProductService],

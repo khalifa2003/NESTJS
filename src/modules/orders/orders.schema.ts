@@ -78,7 +78,7 @@ OrderSchema.pre(/^find/, function (next) {
     })
     .populate({
       path: 'cartItems.product',
-      select: 'title imageCover',
+      select: 'title images',
     });
   next();
 });

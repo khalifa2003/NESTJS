@@ -2,8 +2,6 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import mongoose from 'mongoose';
 
-export type ProductDocument = HydratedDocument<Product>;
-
 @Schema({
   timestamps: true,
   // to enable virtual populate
