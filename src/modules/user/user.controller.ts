@@ -21,53 +21,57 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('user')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.User, Role.Admin, Role.Manager)
   @Get('me')
   async getLoggedUserData(@Req() req): Promise<User> {
     return this.userService.findOne(req.user._id);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.User, Role.Admin, Role.Manager)
   @Put('me/password')
+  @HttpCode(204) // No Content, as we're not returning a response body
   async updateLoggedUserPassword(
     @Req() req,
     @Body() changePasswordDto: ChangePasswordDto,
-  ) {
-    return this.userService.updatePassword(req.user._id, changePasswordDto);
+  ): Promise<void> {
+    await this.userService.updatePassword(req.user._id, changePasswordDto);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.User, Role.Admin, Role.Manager)
   @Put('me')
   async updateLoggedUserData(@Body() updateUserDto: UpdateUserDto, @Req() req) {
     return this.userService.updateLoggedUser(req.user._id, updateUserDto);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.User, Role.Admin, Role.Manager)
   @Delete('me')
+  @HttpCode(204) // No Content
   async deleteLoggedUserData(@Req() req): Promise<void> {
-    return this.userService.deactivateUser(req.user._id);
+    await this.userService.deactivateUser(req.user._id);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.Manager)
   @Get()
   async findAll(): Promise<User[]> {
     return this.userService.findAll();
   }
 
-  // @desc    Get specific user by id
-  // @route   GET /api/v1/users/:id
-  // @access  Private/Admin
-
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.Manager)
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<User> {
     return this.userService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.Manager)
   @Post()
   @HttpCode(201)
@@ -75,6 +79,7 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.Manager)
   @Put(':id')
   async update(
@@ -84,10 +89,19 @@ export class UserController {
     return this.userService.update(id, updateUserDto);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.Manager)
   @Delete(':id')
-  @HttpCode(204)
+  @HttpCode(204) // No Content
   async remove(@Param('id') id: string): Promise<void> {
-    return this.userService.remove(id);
+    await this.userService.remove(id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Admin)
+  @Put(':id/role') // More RESTful route
+  // @HttpCode(204) // No Content
+  async updateToManager(@Param('id') id: string): Promise<User> {
+    return await this.userService.updateRole(id);
   }
 }

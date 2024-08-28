@@ -32,7 +32,7 @@ export class User {
   passwordResetCode: string;
 
   @Prop()
-  passwordResetExpires: number;
+  passwordResetExpires: Date;
 
   @Prop()
   passwordResetVerified: boolean;

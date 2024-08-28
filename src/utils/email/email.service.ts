@@ -1,34 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 
-interface EmailOptions {
-  email: string;
-  subject: string;
-  message: string;
-}
-
 @Injectable()
 export class EmailService {
   private transporter;
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: Number(process.env.EMAIL_PORT),
-      secure: true,
+      service: 'gmail',
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
+        user: 'programingarea@gmail.com',
+        pass: '01272681918Ahmed',
       },
     });
   }
 
-  async sendEmail(options: EmailOptions) {
+  async sendResetCode(email: string, resetCode: string) {
     const mailOptions = {
-      from: 'Programming Area Shop App <khalifa14112003@gmail.com>',
-      to: options.email,
-      subject: options.subject,
-      text: options.message,
+      from: 'programingarea@gmail.com',
+      to: email,
+      subject: 'Password Reset Code',
+      text: `Your password reset code is ${resetCode}`,
     };
 
     await this.transporter.sendMail(mailOptions);

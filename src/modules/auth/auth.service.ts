@@ -5,17 +5,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
-import { ResetPasswordDto } from './dto/reset-password.dto';
-import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { SignupDto } from './dto/signup.dto';
 import { User } from '../user/user.schema';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
+import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
-import { Model } from 'mongoose';
-import { UserService } from '../user/user.service';
 import { EmailService } from 'src/utils/email/email.service';
 
 @Injectable()
@@ -24,17 +21,7 @@ export class AuthService {
     @InjectModel(User.name) private userModel: Model<User>,
     private emailService: EmailService,
     private jwtService: JwtService,
-    private usersService: UserService,
   ) {}
-
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOne(username);
-    if (user && user.password === pass) {
-      const { password, ...result } = user;
-      return result;
-    }
-    return null;
-  }
 
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
@@ -69,37 +56,48 @@ export class AuthService {
     return { user, token };
   }
 
-  async forgetPassword(forgotPasswordDto: ForgotPasswordDto) {
-    const { email } = forgotPasswordDto;
+  async forgetPassword(email: string) {
+    // 1) Get user by email
     const user = await this.userModel.findOne({ email });
-    if (!user) {
+    if (!user)
       throw new NotFoundException(`There is no user with that email ${email}`);
-    }
 
-    const resetCode = crypto.randomBytes(32).toString('hex');
-
+    // 2) If user exist, Generate hash reset random 6 digits and save it in db
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
     const hashedResetCode = crypto
       .createHash('sha256')
       .update(resetCode)
       .digest('hex');
 
+    // Save hashed password reset code into db
     user.passwordResetCode = hashedResetCode;
-    user.passwordResetExpires = Date.now();
-    user.passwordResetVerified = false;
 
+    // Add expiration time for password reset code (5 min)
+    user.passwordResetExpires = new Date(Date.now() + 300);
+    user.passwordResetVerified = false;
     await user.save();
 
-    const message = `Hi ${user.fname},\n We received a request to reset the password on your Account. \n ${resetCode} \n Enter this code to complete the reset. \n Thanks for helping us keep your account secure.\n The Programming Area Team`;
-    await this.emailService.sendEmail({
-      email: user.email,
-      subject: 'Your password reset code (valid for 10 min)',
-      message,
-    });
+    const message = `Hi ${user.fname},\n We received a request to reset the password on your Prog. Area Account. \n ${resetCode} \n Enter this code to complete the reset. \n Thanks for helping us keep your account secure.\n The Prog. Area Team`;
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: 'Your password reset code (valid for 5 min)',
+        message,
+      });
+    } catch (e) {
+      console.error('Error sending email:', e); // Log the exact error
+      user.passwordResetCode = undefined;
+      user.passwordResetExpires = undefined;
+      user.passwordResetVerified = undefined;
+      await user.save();
+      throw new BadRequestException('There is an error in sending email');
+    }
 
     return { status: 'Success', message: 'Reset code sent to email' };
   }
 
   async verifyResetCode(resetCode: string) {
+    // 1) Get user based on reset code
     const hashedResetCode = crypto
       .createHash('sha256')
       .update(resetCode)
@@ -110,34 +108,74 @@ export class AuthService {
       passwordResetExpires: { $gt: Date.now() },
     });
     if (!user) {
-      throw new BadRequestException('Reset code invalid or expired');
+      return new Error('Reset code invalid or expired');
     }
 
+    // 2) Reset code valid
     user.passwordResetVerified = true;
     await user.save();
 
     return { status: 'Success' };
   }
 
-  async resetPassword(resetPasswordDto: ResetPasswordDto) {
-    const { email, resetCode, newPassword } = resetPasswordDto;
-    const user = await this.userModel.findOne({ email });
+  async resetPassword(body: any) {
+    // 1) Get user based on email
+    const user = await this.userModel.findOne({ email: body.email });
     if (!user) {
-      throw new NotFoundException(`There is no user with email ${email}`);
+      new NotFoundException(`There is no user with email ${body.email}`);
     }
 
+    // 2) Check if reset code verified
     if (!user.passwordResetVerified) {
-      throw new BadRequestException('Reset code not verified');
+      return new Error('Reset code not verified');
     }
-
-    user.password = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await bcrypt.hash(body.newPassword, 10);
+    user.password = hashedPassword;
     user.passwordResetCode = undefined;
     user.passwordResetExpires = undefined;
     user.passwordResetVerified = undefined;
 
     await user.save();
 
-    const token = this.jwtService.sign({ userId: user._id });
-    return { token };
+    // 3) if everything is ok, generate token
+    const token = await this.jwtService.sign(
+      { userId: user._id },
+      { secret: process.env.JWT_SECRET_KEY },
+    );
+
+    console.log({ user, token });
+
+    return { user, token };
   }
 }
+
+// Nodemailer
+const nodemailer = require('nodemailer');
+const sendEmail = async (options) => {
+  // 1) Create transporter ( service that will send email like "gmail","Mailgun", "mialtrap", sendGrid)
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: 'true',
+    auth: {
+      user: 'programingarea@gmail.com',
+      pass: 'wiic cqvk wseo puln',
+    },
+  });
+
+  // 2) Define email options (like from, to, subject, email content)
+  const mailOpts = {
+    from: 'Prog. Area-shop App <programingarea@gmail.com>',
+    to: options.email,
+    subject: options.subject,
+    text: options.message,
+  };
+
+  // 3) Send email
+  try {
+    await transporter.sendMail(mailOpts);
+  } catch (error) {
+    console.error('Error sending email:', error);
+    throw new Error('Failed to send email');
+  }
+};

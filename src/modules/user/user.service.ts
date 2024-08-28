@@ -100,4 +100,12 @@ export class UserService {
   async deactivateUser(id: string): Promise<void> {
     await this.userModel.findByIdAndUpdate(id, { active: false });
   }
+
+  async updateRole(id: string): Promise<User> {
+    return this.userModel.findByIdAndUpdate(
+      id,
+      { roles: ['manager'] },
+      { new: true },
+    );
+  }
 }
