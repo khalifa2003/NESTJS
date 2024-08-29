@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Order } from './orders.schema';
 import { Cart } from '../user/cart/cart.schema';
-import { User } from '../user/user.schema';
 import { Product } from '../product/product.schema';
 
 @Injectable()
