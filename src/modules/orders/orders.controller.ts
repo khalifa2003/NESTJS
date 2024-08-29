@@ -22,7 +22,7 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   // User
-  @Roles(Role.User)
+  @Roles(Role.User, Role.Admin, Role.Manager)
   @Post(':cartId')
   async createOrder(
     @Body() orderData: Partial<Order>,
@@ -32,7 +32,7 @@ export class OrderController {
     return this.orderService.createOrder(orderData, cartId, req.user);
   }
 
-  @Roles(Role.User)
+  @Roles(Role.User, Role.Admin, Role.Manager)
   @Get('/userOrders')
   async getOrdersForUser(@Req() req): Promise<Order[]> {
     return this.orderService.getLoggedUserOrders(req.user._id);
@@ -51,7 +51,7 @@ export class OrderController {
     return this.orderService.updateOrderToDelivered(orderId);
   }
 
-  @Roles(Role.Admin, Role.Manager)
+  @Roles(Role.Admin)
   @Delete(':id')
   async deleteOrder(@Param('id') id: string): Promise<Order> {
     return this.orderService.deleteOrder(id);

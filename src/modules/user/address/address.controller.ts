@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { AddressService } from './address.service';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { Address } from './address.schema';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Role } from 'src/common/enums/role.enum';
 import { Roles } from 'src/common/decorators/roles.decorator';
@@ -18,7 +17,7 @@ import { CreateAddressDto } from './dto/create-address.dto';
 
 @Controller('address')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.User)
+@Roles(Role.User, Role.Admin, Role.Manager)
 @UseGuards(JwtAuthGuard)
 export class AddressController {
   constructor(private readonly addressService: AddressService) {}

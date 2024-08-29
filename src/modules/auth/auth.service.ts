@@ -71,9 +71,8 @@ export class AuthService {
 
     // Save hashed password reset code into db
     user.passwordResetCode = hashedResetCode;
-
-    // Add expiration time for password reset code (5 min)
-    user.passwordResetExpires = new Date(Date.now() + 300);
+    // Add expiration time for password reset code (10 min)
+    user.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000);
     user.passwordResetVerified = false;
     await user.save();
 
@@ -93,11 +92,15 @@ export class AuthService {
       throw new BadRequestException('There is an error in sending email');
     }
 
-    return { status: 'Success', message: 'Reset code sent to email' };
+    return {
+      status: 'Success',
+      message: 'Reset code sent to email, please check your email',
+    };
   }
 
   async verifyResetCode(resetCode: string) {
     // 1) Get user based on reset code
+
     const hashedResetCode = crypto
       .createHash('sha256')
       .update(resetCode)
@@ -107,28 +110,31 @@ export class AuthService {
       passwordResetCode: hashedResetCode,
       passwordResetExpires: { $gt: Date.now() },
     });
+
     if (!user) {
-      return new Error('Reset code invalid or expired');
+      throw new NotFoundException('Reset code invalid or expired');
     }
 
     // 2) Reset code valid
     user.passwordResetVerified = true;
     await user.save();
 
-    return { status: 'Success' };
+    return { status: 'Success', message: 'Reset code verified' };
   }
 
   async resetPassword(body: any) {
     // 1) Get user based on email
     const user = await this.userModel.findOne({ email: body.email });
+
     if (!user) {
-      new NotFoundException(`There is no user with email ${body.email}`);
+      throw new NotFoundException(`There is no user with email ${body.email}`);
     }
 
     // 2) Check if reset code verified
     if (!user.passwordResetVerified) {
-      return new Error('Reset code not verified');
+      throw new NotFoundException('Reset code not verified');
     }
+
     const hashedPassword = await bcrypt.hash(body.newPassword, 10);
     user.password = hashedPassword;
     user.passwordResetCode = undefined;
@@ -142,8 +148,6 @@ export class AuthService {
       { userId: user._id },
       { secret: process.env.JWT_SECRET_KEY },
     );
-
-    console.log({ user, token });
 
     return { user, token };
   }

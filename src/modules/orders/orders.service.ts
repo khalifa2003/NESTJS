@@ -58,11 +58,11 @@ export class OrderService {
   }
 
   async getLoggedUserOrders(userId: string): Promise<Order[]> {
-    return this.orderModel.find({ user: userId }).exec();
+    return this.orderModel.find({ user: userId }).sort({ _id: -1 }).exec();
   }
 
   async getAllOrders(): Promise<Order[]> {
-    return this.orderModel.find().exec();
+    return this.orderModel.find().sort({ _id: -1 }).exec();
   }
 
   async updateOrderToDelivered(id: string): Promise<Order> {
