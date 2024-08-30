@@ -1,9 +1,9 @@
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CreateSubcategoryDto } from './dto/create-subcategory.dto';
 import { UpdateSubcategoryDto } from './dto/update-subcategory.dto';
 import { SubcategoryService } from './subcategory.service';
-import { Roles } from 'src/common/decorators/roles.decorator';
-import { Role } from 'src/common/enums/role.enum';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Role } from '../../common/enums/role.enum';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import {
   Controller,

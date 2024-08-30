@@ -11,11 +11,11 @@ import {
   Req,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CreateReviewDto } from './dtos/create-review.dto';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import { Roles } from 'src/common/decorators/roles.decorator';
-import { Role } from 'src/common/enums/role.enum';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Role } from '../../common/enums/role.enum';
 
 @Controller('reviews')
 export class ReviewController {
@@ -56,4 +56,3 @@ export class ReviewController {
     return this.reviewService.deleteReview(id);
   }
 }
- 
