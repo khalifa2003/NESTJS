@@ -9,10 +9,10 @@ import {
   Req,
 } from '@nestjs/common';
 import { AddressService } from './address.service';
-import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
-import { RolesGuard } from '../../../common/guards/roles.guard';
-import { Role } from '../../../common/enums/role.enum';
-import { Roles } from '../../../common/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Role } from 'src/common/enums/role.enum';
+import { Roles } from 'src/common/decorators/roles.decorator';
 import { CreateAddressDto } from './dto/create-address.dto';
 
 @Controller('address')

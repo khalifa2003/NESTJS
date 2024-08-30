@@ -14,11 +14,11 @@ import {
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { RolesGuard } from '../../common/guards/roles.guard';
-import { Role } from '../../common/enums/role.enum';
-import { Roles } from '../../common/decorators/roles.decorator';
-import { ValidateProductPipe } from '../../common/pipes/validate-product.pipe';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Role } from 'src/common/enums/role.enum';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { ValidateProductPipe } from 'src/common/pipes/validate-product.pipe';
 
 @Controller('product')
 export class ProductController {

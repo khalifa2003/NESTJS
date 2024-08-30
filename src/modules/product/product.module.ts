@@ -8,7 +8,7 @@ import { UserModule } from '../user/user.module';
 import { CategoryModule } from '../category/category.module';
 import { SubcategoryModule } from '../subcategory/subcategory.module';
 import { BrandModule } from '../brand/brand.module';
-import { ProductRepository } from '../../common/database repos/product.repository';
+import { ProductRepository } from 'src/common/database repos/product.repository';
 // 1
 @Module({
   imports: [

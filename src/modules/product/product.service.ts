@@ -2,7 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Product } from './product.schema';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { IProductRepository } from '../../common/database repos/interfaces/product.repository.interface';
+import { IProductRepository } from 'src/common/database repos/interfaces/product.repository.interface';
 
 @Injectable()
 export class ProductService {
