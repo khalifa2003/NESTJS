@@ -1,3 +1,9 @@
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { Role } from 'src/common/enums/role.enum';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { OrderService } from './orders.service';
+import { Order } from './orders.schema';
 import {
   Controller,
   Post,
@@ -9,12 +15,6 @@ import {
   Get,
   Delete,
 } from '@nestjs/common';
-import { Roles } from 'src/common/decorators/roles.decorator';
-import { Role } from 'src/common/enums/role.enum';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/common/guards/roles.guard';
-import { OrderService } from './orders.service';
-import { Order } from './orders.schema';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('orders')
