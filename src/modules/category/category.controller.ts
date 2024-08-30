@@ -2,10 +2,10 @@ import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import { Roles } from 'src/common/decorators/roles.decorator';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { Role } from 'src/common/enums/role.enum';
-import { ValidateCategoryDelecationPipe } from 'src/common/pipes/validate-delecation.pipe';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { Role } from '../../common/enums/role.enum';
+import { ValidateCategoryDelecationPipe } from '../../common/pipes/validate-delecation.pipe';
 import {
   Controller,
   Get,
