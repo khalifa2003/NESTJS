@@ -4,7 +4,7 @@ import { UpdateSubcategoryDto } from './dto/update-subcategory.dto';
 import { SubcategoryService } from './subcategory.service';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
-import { RolesGuard } from 'src/common/guards/roles.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
 import {
   Controller,
   UseGuards,

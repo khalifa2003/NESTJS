@@ -1,6 +1,11 @@
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { Role } from 'src/common/enums/role.enum';
+import { ValidateCategoryDelecationPipe } from 'src/common/pipes/validate-delecation.pipe';
 import {
   Controller,
   Get,
@@ -13,11 +18,6 @@ import {
   UseGuards,
   UsePipes,
 } from '@nestjs/common';
-import { RolesGuard } from 'src/common/guards/roles.guard';
-import { Roles } from 'src/common/decorators/roles.decorator';
-import { Role } from 'src/common/enums/role.enum';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { ValidateCategoryDelecationPipe } from 'src/common/pipes/validate-delecation.pipe';
 
 @Controller('category')
 export class CategoryController {
