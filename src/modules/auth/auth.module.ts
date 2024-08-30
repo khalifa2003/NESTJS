@@ -6,7 +6,6 @@ import { AuthController } from './auth.controller';
 import { UserModule } from '../user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from '../user/user.schema';
-import { EmailModule } from 'src/utils/email/email.modul';
 import { JwtStrategy } from 'src/common/jwt.strategy';
 
 @Module({
@@ -19,7 +18,6 @@ import { JwtStrategy } from 'src/common/jwt.strategy';
     forwardRef(() => UserModule),
     PassportModule,
     UserModule,
-    EmailModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],

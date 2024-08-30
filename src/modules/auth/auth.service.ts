@@ -4,7 +4,6 @@ import {
   BadRequestException,
   NotFoundException,
 } from '@nestjs/common';
-import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { SignupDto } from './dto/signup.dto';
 import { User } from '../user/user.schema';
@@ -13,13 +12,11 @@ import { JwtService } from '@nestjs/jwt';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
-import { EmailService } from 'src/utils/email/email.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
-    private emailService: EmailService,
     private jwtService: JwtService,
   ) {}
 

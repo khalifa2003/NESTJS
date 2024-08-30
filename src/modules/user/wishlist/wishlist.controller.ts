@@ -1,8 +1,8 @@
 import { WishlistService } from './wishlist.service';
-import { Roles } from 'src/common/decorators/roles.decorator';
-import { RolesGuard } from 'src/common/guards/roles.guard';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { Role } from 'src/common/enums/role.enum';
+import { Roles } from '../../../common/decorators/roles.decorator';
+import { RolesGuard } from '../../../common/guards/roles.guard';
+import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
+import { Role } from '../../../common/enums/role.enum';
 import {
   Controller,
   Post,

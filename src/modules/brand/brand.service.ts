@@ -2,7 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Brand } from './brand.schema';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
-import { IBrandRepository } from 'src/common/database repos/interfaces/brand.repository.interface';
+import { IBrandRepository } from '../../common/database repos/interfaces/brand.repository.interface';
 
 @Injectable()
 export class BrandService {

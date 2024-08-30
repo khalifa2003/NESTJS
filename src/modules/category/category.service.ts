@@ -2,7 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './category.schema';
-import { ICategoryRepository } from 'src/common/database repos/interfaces/category.repository.interface';
+import { ICategoryRepository } from '../../common/database repos/interfaces/category.repository.interface';
 
 @Injectable()
 export class CategoryService {

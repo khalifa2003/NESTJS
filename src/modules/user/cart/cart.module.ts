@@ -4,7 +4,7 @@ import { Cart, CartSchema } from './cart.schema';
 import { CartController } from './cart.controller';
 import { CartService } from './cart.service';
 import { Product, ProductSchema } from 'src/modules/product/product.schema';
-import { AuthModule } from 'src/modules/auth/auth.module';
+import { AuthModule } from '../../../modules/auth/auth.module';
 import { UserModule } from '../user.module';
 
 @Module({
