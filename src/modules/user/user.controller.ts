@@ -90,18 +90,25 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.Manager)
+  @Roles(Role.Admin)
   @Delete(':id')
   @HttpCode(204) // No Content
-  async remove(@Param('id') id: string): Promise<void> {
-    await this.userService.remove(id);
+  async remove(@Param('id') id: string, @Req() req): Promise<void> {
+    if (req.user.roles[0] === 'admin') {
+      await this.userService.remove(id);
+    } else {
+      throw new Error('Only admins can delete users');
+    }
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin)
-  @Put(':id/role') // More RESTful route
-  // @HttpCode(204) // No Content
-  async updateToManager(@Param('id') id: string): Promise<User> {
-    return await this.userService.updateRole(id);
+  @Put(':id/role')
+  async updateToManager(@Param('id') id: string, @Req() req): Promise<User> {
+    if (req.user.roles[0] === 'admin') {
+      return await this.userService.updateRole(id);
+    } else {
+      throw new Error('Only admins can delete users');
+    }
   }
 }
