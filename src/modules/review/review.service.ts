@@ -1,10 +1,14 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Review } from './review.schema';
-import { CreateReviewDto } from './dtos/create-review.dto';
+import { CreateReviewDto } from './dto/create-review.dto';
 import { Product } from '../product/product.schema';
-import { UpdateProductDto } from './dtos/update-review.dto';
+import { UpdateProductDto } from './dto/update-review.dto';
 
 @Injectable()
 export class ReviewService {

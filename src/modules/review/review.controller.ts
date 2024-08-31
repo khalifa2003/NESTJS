@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { CreateReviewDto } from './dtos/create-review.dto';
+import { CreateReviewDto } from './dto/create-review.dto';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
@@ -56,4 +56,3 @@ export class ReviewController {
     return this.reviewService.deleteReview(id);
   }
 }
- 
