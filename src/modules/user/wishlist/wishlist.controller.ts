@@ -1,5 +1,4 @@
 import { WishlistService } from './wishlist.service';
-import { AddToWishlistDto } from './dto/add-to-wishlist.dto';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
@@ -24,12 +23,9 @@ export class WishlistController {
   constructor(private readonly wishlistService: WishlistService) {}
 
   @Post()
-  async addProductToWishlist(
-    @Req() req,
-    @Body() addToWishlistDto: AddToWishlistDto,
-  ) {
+  async addProductToWishlist(@Req() req, @Body() body) {
     const userId = req.user._id;
-    const { productId } = addToWishlistDto;
+    const { productId } = body;
 
     const user = await this.wishlistService.addProductToWishlist(
       userId,
