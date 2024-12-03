@@ -68,7 +68,7 @@ export class WishlistController {
   async getUserWishlist(@Req() req) {
     const userId = req.user._id;
     const user = await this.wishlistService.getUserWishlist(userId);
-
+    
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
