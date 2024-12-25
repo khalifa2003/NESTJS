@@ -29,6 +29,7 @@ export class Product {
   })
   price: number;
 
+
   @Prop({ type: Number, default: 0 })
   discount: number;
 
@@ -115,3 +116,4 @@ ProductSchema.virtual('stock').get(function () {
     return 'INSTOCK';
   }
 });
+// 
