@@ -116,4 +116,3 @@ ProductSchema.virtual('stock').get(function () {
     return 'INSTOCK';
   }
 });
-// 

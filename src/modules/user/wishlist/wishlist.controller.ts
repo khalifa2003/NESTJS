@@ -26,7 +26,7 @@ export class WishlistController {
   async addProductToWishlist(@Req() req, @Body() body) {
     const userId = req.user._id;
     const { productId } = body;
-
+    
     const user = await this.wishlistService.addProductToWishlist(
       userId,
       productId,
