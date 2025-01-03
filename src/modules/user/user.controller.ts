@@ -92,7 +92,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin)
   @Delete(':id')
-  @HttpCode(204) // No Content
+  @HttpCode(204) 
   async remove(@Param('id') id: string, @Req() req): Promise<void> {
     if (req.user.roles[0] === 'admin') {
       await this.userService.remove(id);
