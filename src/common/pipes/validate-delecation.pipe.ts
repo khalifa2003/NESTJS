@@ -14,7 +14,7 @@ export class ValidateCategoryDelecationPipe implements PipeTransform {
     let products = await this.productService.findBy({ category: value.id });
     if (products.length > 0) {
       throw new ForbiddenException(
-        `The delecation is forbbiden because the model exists in ${products.length} product`,
+        `The delectation is forbidden because the model exists in ${products.length} product`,
       );
     }
     return value;

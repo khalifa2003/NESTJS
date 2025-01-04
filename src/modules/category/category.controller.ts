@@ -17,7 +17,7 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from 'src/common/enums/role.enum';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { ValidateCategoryDelecationPipe } from 'src/common/pipes/validate-delecation.pipe';
+// import { ValidateCategoryDelecationPipe } from 'src/common/pipes/validate-delecation.pipe';
 
 @Controller('category')
 export class CategoryController {
@@ -55,7 +55,7 @@ export class CategoryController {
   @HttpCode(204)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.Manager)
-  @UsePipes(ValidateCategoryDelecationPipe)
+  // @UsePipes(ValidateCategoryDelecationPipe)
   async deleteCategory(@Param('id') id: string) {
     return this.categoryService.deleteOne(id);
   }
