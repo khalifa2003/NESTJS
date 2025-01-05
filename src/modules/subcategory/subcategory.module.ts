@@ -6,7 +6,7 @@ import { AuthModule } from '../auth/auth.module';
 import { UserModule } from '../user/user.module';
 import { SubcategoryRepository } from 'src/common/database repos/subcategory.repository';
 import { SubcategoryService } from './subcategory.service';
-// 1
+
 @Module({
   imports: [
     MongooseModule.forFeature([
