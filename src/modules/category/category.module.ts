@@ -6,7 +6,7 @@ import { Category, CategorySchema } from './category.schema';
 import { AuthModule } from '../auth/auth.module';
 import { UserModule } from '../user/user.module';
 import { ProductModule } from '../product/product.module';
-import { CategoryRepository } from '../../common/database repos/category.repository';
+import { CategoryRepository } from '../../common/database-repos/category.repository';
 @Module({
   imports: [
     MongooseModule.forFeature([

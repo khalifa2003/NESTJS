@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSubcategoryDto } from './dto/create-subcategory.dto';
 import { Subcategory } from './subcategory.schema';
-import { ISubcategoryRepository } from 'src/common/database repos/interfaces/subcategory.repository.interface';
+import { ISubcategoryRepository } from 'src/common/database-repos/interfaces/subcategory.repository.interface';
 import { UpdateSubcategoryDto } from './dto/update-subcategory.dto';
 
 @Injectable()

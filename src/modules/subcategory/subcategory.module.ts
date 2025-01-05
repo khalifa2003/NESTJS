@@ -4,7 +4,7 @@ import { Subcategory, SubcategorySchema } from './subcategory.schema';
 import { SubcategoryController } from './subcategory.controller';
 import { AuthModule } from '../auth/auth.module';
 import { UserModule } from '../user/user.module';
-import { SubcategoryRepository } from 'src/common/database repos/subcategory.repository';
+import { SubcategoryRepository } from 'src/common/database-repos/subcategory.repository';
 import { SubcategoryService } from './subcategory.service';
 
 @Module({

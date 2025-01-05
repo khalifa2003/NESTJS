@@ -5,7 +5,7 @@ import { Brand, BrandSchema } from './brand.schema';
 import { BrandController } from './brand.controller';
 import { UserModule } from '../user/user.module';
 import { AuthModule } from '../auth/auth.module';
-import { BrandRepository } from 'src/common/database repos/brand.repository';
+import { BrandRepository } from 'src/common/database-repos/brand.repository';
 
 @Module({
   imports: [
