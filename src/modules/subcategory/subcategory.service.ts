@@ -1,22 +1,26 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {  Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSubcategoryDto } from './dto/create-subcategory.dto';
 import { Subcategory } from './subcategory.schema';
-import { ISubcategoryRepository } from 'src/common/database-repos/interfaces/subcategory.repository.interface';
 import { UpdateSubcategoryDto } from './dto/update-subcategory.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class SubcategoryService {
   constructor(
-    @Inject('SubcategoryRepository')
-    private readonly subcategoryRepository: ISubcategoryRepository,
+    @InjectModel(Subcategory.name) private subcategoryModel: Model<Subcategory>,
   ) {}
 
   async findAll(category: string = ''): Promise<Subcategory[]> {
-    return this.subcategoryRepository.findAll(category);
+    if (category == '') {
+      return this.subcategoryModel.find().exec();
+    } else {
+      return await this.subcategoryModel.find({ category: category }).exec();
+    }
   }
 
   async findOne(id: string): Promise<Subcategory> {
-    const subcategory = await this.subcategoryRepository.findById(id);
+    const subcategory = this.subcategoryModel.findById(id).exec();
     if (!subcategory) {
       throw new NotFoundException(`Product with ID "${id}" not found`);
     }
@@ -26,17 +30,17 @@ export class SubcategoryService {
   async createOne(
     createSubcategoryDto: CreateSubcategoryDto,
   ): Promise<Subcategory> {
-    return this.subcategoryRepository.create(createSubcategoryDto);
+    const newSubcategory = new this.subcategoryModel(createSubcategoryDto);
+    return newSubcategory.save();
   }
 
   async updateOne(
     id: string,
     updateSubcategoryDto: UpdateSubcategoryDto,
   ): Promise<Subcategory> {
-    const subcategory = await this.subcategoryRepository.update(
-      id,
-      updateSubcategoryDto,
-    );
+    const subcategory = this.subcategoryModel
+      .findByIdAndUpdate(id, updateSubcategoryDto, { new: true })
+      .exec();
     if (!subcategory) {
       throw new NotFoundException(`Product with ID "${id}" not found`);
     }
@@ -44,6 +48,6 @@ export class SubcategoryService {
   }
 
   async deleteOne(id: string): Promise<void> {
-    await this.subcategoryRepository.delete(id);
+    await this.subcategoryModel.findByIdAndDelete(id).exec();
   }
 }

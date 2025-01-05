@@ -8,7 +8,6 @@ import { UserModule } from '../user/user.module';
 import { CategoryModule } from '../category/category.module';
 import { SubcategoryModule } from '../subcategory/subcategory.module';
 import { BrandModule } from '../brand/brand.module';
-import { ProductRepository } from 'src/common/database-repos/product.repository';
 // 1
 @Module({
   imports: [
@@ -21,10 +20,7 @@ import { ProductRepository } from 'src/common/database-repos/product.repository'
     BrandModule,
   ],
   controllers: [ProductController],
-  providers: [
-    ProductService,
-    { provide: 'ProductRepository', useClass: ProductRepository },
-  ],
-  exports: [MongooseModule, ProductService, 'ProductRepository'],
+  providers: [ProductService],
+  exports: [MongooseModule, ProductService],
 })
 export class ProductModule {}

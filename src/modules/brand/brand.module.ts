@@ -5,7 +5,6 @@ import { Brand, BrandSchema } from './brand.schema';
 import { BrandController } from './brand.controller';
 import { UserModule } from '../user/user.module';
 import { AuthModule } from '../auth/auth.module';
-import { BrandRepository } from 'src/common/database-repos/brand.repository';
 
 @Module({
   imports: [
@@ -14,10 +13,7 @@ import { BrandRepository } from 'src/common/database-repos/brand.repository';
     UserModule,
   ],
   controllers: [BrandController],
-  providers: [
-    BrandService,
-    { provide: 'BrandRepository', useClass: BrandRepository },
-  ],
+  providers: [BrandService],
   exports: [MongooseModule],
 })
 export class BrandModule {}

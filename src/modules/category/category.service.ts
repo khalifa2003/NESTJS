@@ -1,41 +1,43 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './category.schema';
-import { ICategoryRepository } from 'src/common/database-repos/interfaces/category.repository.interface';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class CategoryService {
   constructor(
-    @Inject('CategoryRepository')
-    private readonly categoryRepository: ICategoryRepository,
+    @InjectModel(Category.name) private categoryModel: Model<Category>,
   ) {}
 
   async findAll(): Promise<Category[]> {
-    return this.categoryRepository.findAll();
+    return this.categoryModel.find().exec();
   }
 
   async findOne(id: string): Promise<Category> {
-    const product = await this.categoryRepository.findById(id);
-    if (!product) {
+    const category = await this.categoryModel.findById(id);
+    if (!category) {
       throw new NotFoundException(`Product with ID "${id}" not found`);
     }
-    return product;
+    return category;
   }
 
-  async createOne(createCatgoryDto: CreateCategoryDto): Promise<Category> {
-    return this.categoryRepository.create(createCatgoryDto);
+  async createOne(createCategoryDto: CreateCategoryDto): Promise<Category> {
+    return this.categoryModel.create(createCategoryDto);
   }
 
   async updateOne(id: string, updateCategoryDto): Promise<UpdateCategoryDto> {
-    const product = await this.categoryRepository.update(id, updateCategoryDto);
-    if (!product) {
+    const category = await this.categoryModel
+      .findByIdAndUpdate(id, updateCategoryDto, { new: true })
+      .exec();
+    if (!category) {
       throw new NotFoundException(`Product with ID "${id}" not found`);
     }
-    return product;
+    return category;
   }
 
   async deleteOne(id: string): Promise<void> {
-    await this.categoryRepository.delete(id);
+    await this.categoryModel.findByIdAndDelete(id).exec();
   }
 }

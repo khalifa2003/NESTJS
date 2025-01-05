@@ -6,7 +6,6 @@ import { Category, CategorySchema } from './category.schema';
 import { AuthModule } from '../auth/auth.module';
 import { UserModule } from '../user/user.module';
 import { ProductModule } from '../product/product.module';
-import { CategoryRepository } from '../../common/database-repos/category.repository';
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -17,10 +16,7 @@ import { CategoryRepository } from '../../common/database-repos/category.reposit
     forwardRef(() => ProductModule),
   ],
   controllers: [CategoryController],
-  providers: [
-    CategoryService,
-    { provide: 'CategoryRepository', useClass: CategoryRepository },
-  ],
+  providers: [CategoryService],
   exports: [MongooseModule],
 })
 export class CategoryModule {}

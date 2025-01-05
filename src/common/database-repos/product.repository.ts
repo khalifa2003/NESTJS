@@ -19,8 +19,6 @@ export class ProductRepository implements IProductRepository {
   }
 
   async findAll(queryParams: any): Promise<Product[]> {
-    // return this.productModel.find().exec();
-
     const query: any = {};
 
     if (queryParams) {
