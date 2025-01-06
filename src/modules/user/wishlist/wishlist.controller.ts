@@ -26,7 +26,7 @@ export class WishlistController {
   async addProductToWishlist(@Req() req, @Body() body) {
     const userId = req.user._id;
     const { productId } = body;
-    
+
     const user = await this.wishlistService.addProductToWishlist(
       userId,
       productId,
@@ -34,11 +34,7 @@ export class WishlistController {
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-    return {
-      status: 'success',
-      message: 'Product added successfully to your wishlist.',
-      data: user.wishlist,
-    };
+    return user.wishlist;
   }
 
   @Delete(':productId')
@@ -57,26 +53,18 @@ export class WishlistController {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
-    return {
-      status: 'success',
-      message: 'Product removed successfully from your wishlist.',
-      data: user.wishlist,
-    };
+    return user.wishlist;
   }
 
   @Get()
   async getUserWishlist(@Req() req) {
     const userId = req.user._id;
     const user = await this.wishlistService.getUserWishlist(userId);
-    
+
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
-    return {
-      status: 'success',
-      results: user.wishlist.length,
-      data: user.wishlist,
-    };
+    return user.wishlist;
   }
 }

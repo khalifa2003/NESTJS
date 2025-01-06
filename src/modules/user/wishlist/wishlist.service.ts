@@ -49,6 +49,7 @@ export class WishlistService {
         path: 'wishlist',
         model: Product.name,
       })
+
       .exec();
   }
 }
