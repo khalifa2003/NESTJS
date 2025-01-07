@@ -84,4 +84,30 @@ export class ProductService {
   async findBy(data): Promise<Product[]> {
     return this.productModel.find(data).exec();
   }
+
+  async getHomeProducts(): Promise<any> {
+    const NOTEBOOK = await this.productModel
+      .find({ category: '665b9e7eee20a57f1c86a3df' })
+      .exec();
+    const DESKTOP = await this.productModel
+      .find({ category: '665b9e66ee20a57f1c86a3dd' })
+      .exec();
+    const STORAGE = await this.productModel
+      .find({ category: '665b9e9cee20a57f1c86a3e1' })
+      .exec();
+    const MONITOR = await this.productModel
+      .find({ category: '665b9ebaee20a57f1c86a3e3' })
+      .exec();
+    const ACCESSORIES = await this.productModel
+      .find({ category: '665b9ee3ee20a57f1c86a3e7' })
+      .exec();
+
+    return [
+      { name: 'NOTEBOOK', products: NOTEBOOK },
+      { name: 'ACCESSORIES', products: ACCESSORIES },
+      { name: 'DESKTOP', products: DESKTOP },
+      { name: 'MONITOR', products: MONITOR },
+      { name: 'STORAGE', products: STORAGE },
+    ];
+  }
 }

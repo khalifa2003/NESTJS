@@ -5,7 +5,6 @@ import {
   Get,
   HttpCode,
   Param,
-  Patch,
   Post,
   Put,
   Req,
@@ -69,8 +68,6 @@ export class CartController {
   @HttpCode(204)
   async clearCart(@Req() req) {
     await this.cartService.clearCart(req.user._id);
-    console.log('---------------------------');
-    
     return { status: 'success', message: 'Cart cleared successfully' };
   }
 

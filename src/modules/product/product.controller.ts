@@ -30,6 +30,12 @@ export class ProductController {
     return products;
   }
 
+  @Get('home-products')
+  async getHomeProducts() {
+    const products = await this.productService.getHomeProducts();
+    return products;
+  }
+
   @Get('/:id')
   async getProduct(@Param('id') id: string) {
     return this.productService.findOne(id);
@@ -47,7 +53,6 @@ export class ProductController {
   @Put('/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin, Role.Manager)
-
   async updateProduct(@Param('id') id: string, @Body() body: UpdateProductDto) {
     return this.productService.updateOne(id, body);
   }

@@ -29,11 +29,7 @@ export class AddressController {
       userId,
       createAddressDto,
     );
-    return {
-      status: 'success',
-      message: 'Address Added Successfully',
-      user: updatedUser.addresses,
-    };
+    return updatedUser.addresses;
   }
 
   @Delete(':addressId')
@@ -43,21 +39,13 @@ export class AddressController {
       userId,
       addressId,
     );
-    return {
-      status: 'success',
-      message: 'Address removed successfully',
-      user: updatedUser.addresses,
-    };
+    return updatedUser.addresses;
   }
 
   @Get()
   async getLoggedUserAddresses(@Req() req) {
     const userId = req.user._id;
     const addresses = await this.addressService.getLoggedUserAddresses(userId);
-    return {
-      status: 'success',
-      message: 'Addresses Fetched Successfully.',
-      data: addresses,
-    };
+    return addresses;
   }
 }

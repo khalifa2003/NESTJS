@@ -24,16 +24,11 @@ export class WishlistController {
 
   @Post()
   async addProductToWishlist(@Req() req, @Body() body) {
-    const userId = req.user._id;
-    const { productId } = body;
-
     const user = await this.wishlistService.addProductToWishlist(
-      userId,
-      productId,
+      req.user._id,
+      body.productId,
     );
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    }
+
     return user.wishlist;
   }
 
@@ -42,29 +37,26 @@ export class WishlistController {
     @Req() req,
     @Param('productId') productId: string,
   ) {
-    const userId = req.user._id;
-
     const user = await this.wishlistService.removeProductFromWishlist(
-      userId,
+      req.user._id,
       productId,
     );
-
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    }
 
     return user.wishlist;
   }
 
   @Get()
   async getUserWishlist(@Req() req) {
-    const userId = req.user._id;
-    const user = await this.wishlistService.getUserWishlist(userId);
-
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    }
+    const user = await this.wishlistService.getUserWishlist(req.user._id);
 
     return user.wishlist;
+  }
+
+  @Get(':ids')
+  async getUserWishlistIds(@Req() req) {
+    const wishlist = await this.wishlistService.getWishlistProductIds(
+      req.user._id,
+    );
+    return wishlist;
   }
 }
